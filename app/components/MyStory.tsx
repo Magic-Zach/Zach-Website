@@ -48,18 +48,17 @@ const CHAPTERS = [
   {
     id: "building",
     number: "III",
-    label: "BUILDING",
+    label: "NOW",
     accent: "#8AAF8E",
-    title: "Startups, Strategy, and a Side of Magic",
+    title: "Strategy, New York, and a Side of Magic",
     paragraphs: [
-      "After Michigan I went deep into startups and strategy. At Prophet I worked inside Fortune 500 companies — diagnosing what wasn't working, building what might. Then VC: evaluating early-stage bets, sharpening the pattern-recognition that separates ideas worth betting on from ideas that just sound good.",
-      "And then, a slight detour. Magic — the performance kind — became a serious obsession. Weekly sessions with 50+ magicians. A community that sharpened not just sleight of hand, but how to hold a room.",
+      "I moved to New York to become a Business Growth Strategy Consultant at Prophet, where we only focus on revenue growth (only the fun stuff… not cutting costs by firing people). For the past few years, I've been helping Fortune 500 companies innovate and grow by understanding what people need, and figuring out how to meet those needs through unique brand, marketing, and product strategies.",
+      "I've learned a ton about how businesses and their leaders think, make decisions, and grow (or don't).",
     ],
-    hero: { src: null as null | string, label: "PROPHET — NEW YORK CITY" },
+    hero: { src: "/ch3-main.jpg" as string | null, label: "PROPHET — NEW YORK CITY" },
     notes: [
-      { type: "stat" as const, stat: "50+", statLabel: "WEEKLY MAGICIANS", caption: "A serious community built around a shared obsession with the impossible." },
-      { type: "image" as const, src: null as null | string, label: "MAGIC — PERFORMANCE", caption: "The most underrated lens for understanding attention, surprise, and what people actually remember." },
-      { type: "image" as const, src: null as null | string, label: "VISIONOVA", caption: "Breaking down cool startups for people who want to understand what's being built." },
+      { type: "image" as const, src: "/ch3-side1.jpeg" as string | null, label: "NYC LIFE", caption: "I've been loving NYC, meeting new people and trying new things — data science competition, producing an artistic photo project, performing a comedy show, origami convention, dog show, sword dancing festival, piano recital, astronomy lectures, and more." },
+      { type: "image" as const, src: "/ch3-side2.jpeg" as string | null, label: "MAGICIAN", caption: "I became a magician, using psychology, storytelling, and improvisation to engage live audiences at private events and on the street. This photo is from my gig at a black-tie boxing and ballet gala." },
     ],
   },
 ] as const;
@@ -69,11 +68,8 @@ function FlipImageCard({ src, label, caption, accent }: { src: string | null; la
   const [flipped, setFlipped] = useState(false);
 
   return (
-    <motion.div
-      className="flex flex-col gap-2"
-      style={{ flex: "1 1 130px", minWidth: "110px", maxWidth: "200px" }}
-    >
-      {/* Card container with flip */}
+    <div className="flex flex-col gap-2" style={{ flex: "1 1 130px", minWidth: "110px", maxWidth: "190px" }}>
+      {/* Card — fixed 4:3 aspect ratio for all side notes */}
       <div
         onClick={() => setFlipped((v) => !v)}
         style={{
@@ -90,7 +86,7 @@ function FlipImageCard({ src, label, caption, accent }: { src: string | null; la
             src={src}
             alt={label}
             fill
-            style={{ objectFit: "cover", transition: "filter 0.4s ease", filter: flipped ? "blur(6px) brightness(0.55)" : "none" }}
+            style={{ objectFit: "cover", transition: "filter 0.45s ease", filter: flipped ? "blur(5px) brightness(0.38)" : "none" }}
             sizes="200px"
           />
         ) : (
@@ -99,7 +95,7 @@ function FlipImageCard({ src, label, caption, accent }: { src: string | null; la
           </div>
         )}
 
-        {/* Caption overlay — revealed on flip */}
+        {/* Caption overlay — dark scrim + readable text */}
         <AnimatePresence>
           {flipped && (
             <motion.div
@@ -113,18 +109,19 @@ function FlipImageCard({ src, label, caption, accent }: { src: string | null; la
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                padding: "16px",
+                padding: "14px",
                 zIndex: 2,
+                background: "rgba(20,18,12,0.55)",
               }}
             >
               <p
                 style={{
-                  fontSize: "12px",
-                  lineHeight: 1.55,
-                  color: "#fff",
+                  fontSize: "clamp(11px, 1vw, 13px)",
+                  lineHeight: 1.5,
+                  color: "#F2EBD9",
                   textAlign: "center",
                   fontFamily: "var(--font-dm-sans)",
-                  textShadow: "0 1px 4px rgba(0,0,0,0.5)",
+                  fontWeight: 500,
                 }}
               >
                 {caption}
@@ -143,8 +140,7 @@ function FlipImageCard({ src, label, caption, accent }: { src: string | null; la
               fontSize: "8px",
               letterSpacing: "0.1em",
               color: "#fff",
-              fontFamily: "var(--font-dm-mono)",
-              background: "rgba(0,0,0,0.35)",
+              background: "rgba(0,0,0,0.45)",
               padding: "2px 6px",
               borderRadius: "2px",
             }}
@@ -155,15 +151,15 @@ function FlipImageCard({ src, label, caption, accent }: { src: string | null; la
         )}
       </div>
 
-      {/* Label below */}
-      <span className="font-mono" style={{ fontSize: "8px", letterSpacing: "0.14em", color: accent, opacity: 0.65 }}>
+      {/* Label below — high contrast gold */}
+      <span className="font-mono" style={{ fontSize: "9px", letterSpacing: "0.15em", color: accent }}>
         {label}
       </span>
-    </motion.div>
+    </div>
   );
 }
 
-/* ── Image / stat side-note card ─────────────────────────────────────────── */
+/* ── Image side-note card ────────────────────────────────────────────────── */
 function NoteCard({
   note,
   accent,
@@ -171,39 +167,6 @@ function NoteCard({
   note: (typeof CHAPTERS)[number]["notes"][number];
   accent: string;
 }) {
-  if (note.type === "stat") {
-    return (
-      <motion.div
-        className="flex flex-col gap-1"
-        style={{ flex: "1 1 100px", minWidth: "80px", maxWidth: "160px" }}
-        whileHover={{ y: -2 }}
-        transition={{ duration: 0.2, ease: "easeOut" }}
-      >
-        <div
-          className="font-display"
-          style={{
-            fontFamily: "var(--font-cormorant)",
-            fontSize: "clamp(40px, 4.5vw, 58px)",
-            fontWeight: 400,
-            color: accent,
-            lineHeight: 1,
-          }}
-        >
-          {note.stat}
-        </div>
-        <div
-          className="font-mono"
-          style={{ fontSize: "7px", letterSpacing: "0.14em", color: "#1C1A14", opacity: 0.4, marginTop: "2px" }}
-        >
-          {note.statLabel}
-        </div>
-        <p style={{ fontSize: "11px", lineHeight: 1.55, color: "#1C1A14", opacity: 0.55, marginTop: "6px" }}>
-          {note.caption}
-        </p>
-      </motion.div>
-    );
-  }
-
   return <FlipImageCard src={note.src} label={note.label} caption={note.caption} accent={accent} />;
 }
 
@@ -218,12 +181,14 @@ function ChapterPanel({
   scrollYProgress: ReturnType<typeof useScroll>["scrollYProgress"];
 }) {
   const n = CHAPTERS.length;
+  const isLast = index === n - 1;
 
-  /* Fade content in as this chapter enters the viewport */
-  const inStart = Math.max(0, (index - 0.6) / n);
-  const inEnd   = (index + 0.2) / n;
-  const outStart = (index + 0.65) / n;
-  const outEnd   = Math.min(1, (index + 1.2) / n);
+  /* Fade thresholds — last chapter special-cased:
+     it enters view at progress≈0.5 and should NOT fade out (no next chapter). */
+  const inStart  = isLast ? 0.5  : Math.max(0, (index - 0.6) / n);
+  const inEnd    = isLast ? 0.85 : (index + 0.2) / n;
+  const outStart = isLast ? 1.0  : (index + 0.65) / n;
+  const outEnd   = isLast ? 1.0  : Math.min(1, (index + 1.2) / n);
 
   const opacity = useTransform(
     scrollYProgress,
@@ -258,10 +223,10 @@ function ChapterPanel({
       {/* Chapter label row */}
       <div
         className="flex-shrink-0 flex items-center gap-4"
-        style={{ padding: "24px 56px 16px" }}
+        style={{ padding: "20px 56px 12px" }}
       >
         <span className="font-mono" style={{ fontSize: "10px", letterSpacing: "0.22em", color: chapter.accent }}>
-          CH. {chapter.number}
+          CHAPTER {chapter.number}
         </span>
         <div style={{ height: "1px", flex: 1, background: chapter.accent, opacity: 0.22 }} />
         <span className="font-mono" style={{ fontSize: "10px", letterSpacing: "0.18em", color: "#1C1A14", opacity: 0.28 }}>
@@ -275,20 +240,21 @@ function ChapterPanel({
         style={{
           gridTemplateColumns: "1fr 1fr",
           gap: "clamp(24px, 3vw, 56px)",
-          padding: "0 56px 28px",
+          padding: "0 56px 24px",
         }}
       >
-        {/* LEFT — hero image */}
-        <motion.div style={{ opacity }} className="relative min-h-0 flex flex-col">
+        {/* LEFT — hero image: fixed 3:4 portrait aspect ratio, consistent across chapters */}
+        <motion.div style={{ opacity }} className="flex flex-col justify-center">
           <div
-            className="flex-1 relative min-h-0"
             style={{
+              aspectRatio: "3/4",
+              position: "relative",
               border: `1px solid rgba(196,154,60,0.38)`,
               background: "#FBF7EE",
               overflow: "hidden",
+              maxHeight: "calc(100vh - 140px)",
             }}
           >
-            {/* Inner Art Deco frame inset */}
             <div className="absolute" style={{ inset: "10px", border: "1px solid rgba(196,154,60,0.18)", pointerEvents: "none", zIndex: 2 }} />
             {chapter.hero.src ? (
               <Image
@@ -296,7 +262,7 @@ function ChapterPanel({
                 alt={chapter.hero.label}
                 fill
                 style={{ objectFit: "cover", objectPosition: "center top" }}
-                sizes="50vw"
+                sizes="40vw"
               />
             ) : (
               <div className="absolute inset-0 flex items-center justify-center">
@@ -311,13 +277,13 @@ function ChapterPanel({
         {/* RIGHT — text + notes */}
         <motion.div
           style={{ opacity, y: yText }}
-          className="flex flex-col justify-center gap-5 min-h-0 py-2"
+          className="flex flex-col justify-center gap-4 min-h-0 py-2"
         >
           <h2
             className="font-display italic leading-tight"
             style={{
               fontFamily: "var(--font-cormorant)",
-              fontSize: "clamp(26px, 3.5vw, 50px)",
+              fontSize: "clamp(26px, 3.2vw, 46px)",
               fontWeight: 400,
               color: "#1C1A14",
               lineHeight: 1.1,
@@ -335,7 +301,7 @@ function ChapterPanel({
               <p
                 key={i}
                 style={{
-                  fontSize: "clamp(13px, 1.15vw, 15px)",
+                  fontSize: "clamp(12px, 1.05vw, 14px)",
                   lineHeight: 1.72,
                   color: "#1C1A14",
                   opacity: 0.76,
@@ -348,13 +314,19 @@ function ChapterPanel({
           </div>
 
           {/* Side notes */}
-          <div
-            className="flex gap-5 mt-1"
-            style={{ flexWrap: "wrap", borderTop: "1px solid rgba(196,154,60,0.2)", paddingTop: "20px" }}
-          >
-            {chapter.notes.map((note, i) => (
-              <NoteCard key={i} note={note} accent={chapter.accent} />
-            ))}
+          <div style={{ marginTop: "4px" }}>
+            {/* "Side Notes" label + divider */}
+            <div className="flex items-center gap-3" style={{ marginBottom: "14px" }}>
+              <span className="font-mono" style={{ fontSize: "8px", letterSpacing: "0.22em", color: "#1C1A14", opacity: 0.35, whiteSpace: "nowrap" }}>
+                SIDE NOTES
+              </span>
+              <div style={{ height: "1px", flex: 1, background: "rgba(196,154,60,0.2)" }} />
+            </div>
+            <div className="flex gap-4" style={{ flexWrap: "wrap" }}>
+              {chapter.notes.map((note, i) => (
+                <NoteCard key={i} note={note} accent={chapter.accent} />
+              ))}
+            </div>
           </div>
         </motion.div>
       </div>
@@ -483,7 +455,7 @@ export default function MyStory() {
           >
             <div className="flex items-center gap-3 mb-5">
               <span className="font-mono" style={{ fontSize: "9px", letterSpacing: "0.2em", color: chapter.accent }}>
-                CH. {chapter.number}
+                CHAPTER {chapter.number}
               </span>
               <div style={{ height: "1px", flex: 1, background: chapter.accent, opacity: 0.2 }} />
             </div>
@@ -509,10 +481,18 @@ export default function MyStory() {
             {chapter.paragraphs.map((p, i) => (
               <p key={i} style={{ fontSize: "14px", lineHeight: 1.7, color: "#1C1A14", opacity: 0.75, marginBottom: "12px" }}>{p}</p>
             ))}
-            <div className="flex gap-4 mt-5 flex-wrap">
-              {chapter.notes.map((note, i) => (
-                <NoteCard key={i} note={note} accent={chapter.accent} />
-              ))}
+            <div style={{ marginTop: "20px" }}>
+              <div className="flex items-center gap-3" style={{ marginBottom: "12px" }}>
+                <span className="font-mono" style={{ fontSize: "8px", letterSpacing: "0.22em", color: "#1C1A14", opacity: 0.35 }}>
+                  SIDE NOTES
+                </span>
+                <div style={{ height: "1px", flex: 1, background: "rgba(196,154,60,0.2)" }} />
+              </div>
+              <div className="flex gap-4 flex-wrap">
+                {chapter.notes.map((note, i) => (
+                  <NoteCard key={i} note={note} accent={chapter.accent} />
+                ))}
+              </div>
             </div>
           </div>
         ))}

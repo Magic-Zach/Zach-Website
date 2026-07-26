@@ -139,85 +139,16 @@ function ArtDecoBackground() {
   );
 }
 
-/* ── SVG Artifact Icons ───────────────────────────────────────────────────── */
-function SoccerBall() {
-  return (
-    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" strokeWidth="1.25" aria-label="Soccer ball">
-      <circle cx="28" cy="28" r="24" />
-      <polygon points="28,10 36,18 33,28 23,28 20,18" strokeWidth="1" />
-      <line x1="28" y1="4" x2="28" y2="10" /><line x1="20" y1="18" x2="9" y2="16" />
-      <line x1="36" y1="18" x2="47" y2="16" /><line x1="23" y1="28" x2="14" y2="38" />
-      <line x1="33" y1="28" x2="42" y2="38" /><line x1="14" y1="38" x2="20" y2="48" />
-      <line x1="42" y1="38" x2="36" y2="48" />
-    </svg>
-  );
-}
-function BlockM() {
-  return (
-    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" strokeWidth="1.25" aria-label="Block M">
-      <path d="M6,48 L6,10 L16,10 L28,32 L40,10 L50,10 L50,48 L40,48 L40,26 L31,44 L25,44 L16,26 L16,48 Z" />
-    </svg>
-  );
-}
-function Skateboard() {
-  return (
-    <svg viewBox="0 0 72 40" fill="none" stroke="currentColor" strokeWidth="1.25" aria-label="Skateboard">
-      <rect x="6" y="10" width="60" height="14" rx="6" />
-      <circle cx="18" cy="30" r="5" /><circle cx="54" cy="30" r="5" />
-    </svg>
-  );
-}
-function CircuitBoard() {
-  return (
-    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" strokeWidth="1.25" aria-label="Circuit board">
-      <rect x="6" y="6" width="44" height="44" /><rect x="18" y="18" width="20" height="20" />
-      <line x1="6" y1="22" x2="18" y2="22" /><line x1="6" y1="34" x2="18" y2="34" />
-      <line x1="38" y1="22" x2="50" y2="22" /><line x1="38" y1="34" x2="50" y2="34" />
-      <line x1="22" y1="6" x2="22" y2="18" /><line x1="34" y1="6" x2="34" y2="18" />
-      <line x1="22" y1="38" x2="22" y2="50" /><line x1="34" y1="38" x2="34" y2="50" />
-      <circle cx="6" cy="22" r="1.5" fill="currentColor" stroke="none" />
-      <circle cx="6" cy="34" r="1.5" fill="currentColor" stroke="none" />
-      <circle cx="50" cy="22" r="1.5" fill="currentColor" stroke="none" />
-      <circle cx="50" cy="34" r="1.5" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-function Briefcase() {
-  return (
-    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" strokeWidth="1.25" aria-label="Briefcase">
-      <rect x="6" y="18" width="44" height="30" rx="1" />
-      <path d="M20,18 L20,12 Q20,8 28,8 Q36,8 36,12 L36,18" />
-      <line x1="6" y1="32" x2="50" y2="32" /><rect x="25" y="29" width="6" height="6" rx="1" />
-    </svg>
-  );
-}
-function PlayingCards() {
-  return (
-    <svg viewBox="0 0 72 56" fill="none" stroke="currentColor" strokeWidth="1.25" aria-label="Playing cards">
-      <g transform="rotate(-18, 20, 44)"><rect x="4" y="8" width="28" height="40" rx="2" /></g>
-      <rect x="22" y="8" width="28" height="40" rx="2" />
-      <text x="26" y="24" fontSize="10" fontFamily="serif" fill="currentColor" stroke="none">A</text>
-      <g transform="rotate(18, 52, 44)"><rect x="40" y="8" width="28" height="40" rx="2" /></g>
-    </svg>
-  );
-}
-
-/* ── Artifact config — positioned relative to the hero section ───────────── */
-const ARTIFACTS = [
-  { id: "soccer",     label: "Growing Up", scrollTo: "#chapter-i",   Icon: SoccerBall,   top: "10%", left: "4%",  floatDelay: 0,   floatDuration: 3.8 },
-  { id: "block-m",    label: "Michigan",   scrollTo: "#chapter-ii",  Icon: BlockM,       top: "8%",  left: "88%", floatDelay: 0.7, floatDuration: 4.2 },
-  { id: "skateboard", label: "Michigan",   scrollTo: "#chapter-ii",  Icon: Skateboard,   top: "58%", left: "3%",  floatDelay: 1.3, floatDuration: 3.5 },
-  { id: "circuit",    label: "Startups",   scrollTo: "#chapter-iii", Icon: CircuitBoard, top: "56%", left: "87%", floatDelay: 0.4, floatDuration: 4.6 },
-  { id: "briefcase",  label: "Prophet",    scrollTo: "#chapter-iv",  Icon: Briefcase,    top: "80%", left: "22%", floatDelay: 1.0, floatDuration: 4.0 },
-  { id: "cards",      label: "Magic",      scrollTo: "#chapter-iv",  Icon: PlayingCards, top: "78%", left: "76%", floatDelay: 0.2, floatDuration: 3.3 },
-] as const;
-
 /* ── Name display via SVG — equal width + ultra-thick glyphs ────────────── */
 function NameDisplay() {
   const font = "var(--font-display-name), Anton, Impact, sans-serif";
+  /* Taller viewBox so ZACH+LIPKIN block fills roughly the same height as
+     the portrait image (clamp 200-330px wide × 4:3 ratio = 267-440px tall).
+     At a typical 800px left-column width: 800 × (500/1000) = 400px SVG height,
+     plus the divider and tagline, totals ≈ portrait height. */
   return (
     <svg
-      viewBox="0 0 1000 240"
+      viewBox="0 0 1000 500"
       width="100%"
       style={{ display: "block", overflow: "visible" }}
       role="img"
@@ -230,12 +161,12 @@ function NameDisplay() {
         </filter>
       </defs>
 
-      {/* ZACH — spacingAndGlyphs stretches the actual letter shapes to fill width */}
+      {/* ZACH */}
       <text
-        x="0" y="113"
+        x="0" y="235"
         textLength="1000"
         lengthAdjust="spacingAndGlyphs"
-        fontSize="118"
+        fontSize="240"
         fontFamily={font}
         fontWeight="900"
         fill="#1C1A14"
@@ -247,10 +178,10 @@ function NameDisplay() {
 
       {/* LIPKIN */}
       <text
-        x="0" y="232"
+        x="0" y="490"
         textLength="1000"
         lengthAdjust="spacingAndGlyphs"
-        fontSize="118"
+        fontSize="240"
         fontFamily={font}
         fontWeight="900"
         fill="#1C1A14"
@@ -266,10 +197,6 @@ function NameDisplay() {
 /* ── Hero ────────────────────────────────────────────────────────────────── */
 export default function Hero() {
   const prefersReducedMotion = useReducedMotion();
-
-  const scrollTo = (href: string) => {
-    document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
-  };
 
   return (
     <section
@@ -296,25 +223,6 @@ export default function Hero() {
         <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-[7px]"><EdgeDiamond /></div>
       </div>
 
-      {/* ── Floating artifacts across the full hero ──────────────────────── */}
-      {ARTIFACTS.map((art) => (
-        <motion.button
-          key={art.id}
-          aria-label={`Go to ${art.label}`}
-          onClick={() => scrollTo(art.scrollTo)}
-          className="absolute hidden md:flex items-center justify-center cursor-pointer z-10"
-          style={{ top: art.top, left: art.left, color: "#C49A3C", width: "48px", height: "48px", background: "transparent", border: "none", padding: 0 }}
-          animate={prefersReducedMotion ? {} : {
-            y: [-6, 6, -6],
-            transition: { duration: art.floatDuration, delay: art.floatDelay, repeat: Infinity, ease: "easeInOut" },
-          }}
-          whileHover={prefersReducedMotion ? {} : { scale: 1.14 }}
-          whileTap={prefersReducedMotion ? {} : { scale: 0.96 }}
-          title={art.label}
-        >
-          <art.Icon />
-        </motion.button>
-      ))}
 
       {/* ── Main content ─────────────────────────────────────────────────── */}
       <div className="relative z-20 w-full max-w-6xl mx-auto px-10 sm:px-16">
@@ -371,23 +279,6 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* Mobile artifact row */}
-        <div className="mt-8 flex md:hidden gap-5 overflow-x-auto pb-1 justify-center">
-          {ARTIFACTS.filter((_, i) => i % 2 === 0).map((art) => (
-            <button
-              key={art.id}
-              aria-label={`Go to ${art.label}`}
-              onClick={() => scrollTo(art.scrollTo)}
-              className="flex-shrink-0 flex flex-col items-center gap-1"
-              style={{ color: "#C49A3C", background: "transparent", border: "none" }}
-            >
-              <div style={{ width: "38px", height: "38px" }}><art.Icon /></div>
-              <span className="font-mono" style={{ fontSize: "8px", letterSpacing: "0.1em", color: "#C49A3C", opacity: 0.7 }}>
-                {art.label}
-              </span>
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* Scroll indicator */}
