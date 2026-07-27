@@ -4,7 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { motion, useInView, useReducedMotion, AnimatePresence } from "framer-motion";
 
-const RESUME_URL = "/Resume.pdf";
+const RESUME_URL = "/Zach_Lipkin_Resume.pdf";
 
 const PDFModal = dynamic(() => import("./PDFModal"), { ssr: false });
 
@@ -14,9 +14,32 @@ const CONTACT_LINKS = [
   { label: "Substack", href: "https://substack.com/@zachlipkin",    display: "substack.com/@zachlipkin" },
 ];
 
-/* ── Decorative document thumbnail ──────────────────────────────────────── */
-function ResumeThumbnail({ onClick }: { onClick: () => void }) {
+/* ── PDF thumbnail via scaled iframe ────────────────────────────────────────
+   The iframe renders the real PDF at ~850px wide (letter width in px),
+   then a CSS transform scales it down to fit the container.
+   pointer-events:none makes the iframe non-interactive so clicks hit the
+   outer button. A "CLICK TO VIEW" badge floats at the bottom.
+   ──────────────────────────────────────────────────────────────────────── */
+function ResumeThumbnail({ onClick, containerRef }: { onClick: () => void; containerRef: React.RefObject<HTMLDivElement | null> }) {
   const [hovered, setHovered] = useState(false);
+  const [containerWidth, setContainerWidth] = useState(260);
+
+  /* Track container width so we can compute the right scale */
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const ro = new ResizeObserver(([entry]) => {
+      setContainerWidth(entry.contentRect.width);
+    });
+    ro.observe(containerRef.current);
+    return () => ro.disconnect();
+  }, [containerRef]);
+
+  /* PDF page is 8.5" × 11" at 96dpi ≈ 816 × 1056px.
+     We render the iframe at those native dimensions then scale to fit. */
+  const PDF_W = 816;
+  const PDF_H = 1056;
+  const scale = containerWidth / PDF_W;
+  const scaledH = PDF_H * scale;
 
   return (
     <div
@@ -28,9 +51,9 @@ function ResumeThumbnail({ onClick }: { onClick: () => void }) {
       onKeyDown={(e) => e.key === "Enter" && onClick()}
       aria-label="View resume"
       style={{
-        width: "clamp(180px, 22vw, 290px)",
-        aspectRatio: "8.5/11",
-        background: "#FDFAF4",
+        width: "100%",
+        height: `${scaledH}px`,
+        background: "#fff",
         border: `1px solid rgba(196,154,60,${hovered ? 0.7 : 0.45})`,
         position: "relative",
         boxShadow: hovered
@@ -42,40 +65,25 @@ function ResumeThumbnail({ onClick }: { onClick: () => void }) {
         transition: "box-shadow 0.22s ease, border-color 0.22s ease, transform 0.22s ease",
       }}
     >
-      {/* Inner frame */}
-      <div style={{ position: "absolute", inset: "10px", border: "1px solid rgba(196,154,60,0.18)", pointerEvents: "none" }} />
+      {/* Scaled-down real PDF — pointer-events off so clicks pass through */}
+      <iframe
+        src={RESUME_URL}
+        title="Resume preview"
+        style={{
+          width: `${PDF_W}px`,
+          height: `${PDF_H}px`,
+          border: "none",
+          display: "block",
+          transform: `scale(${scale})`,
+          transformOrigin: "top left",
+          pointerEvents: "none",
+          userSelect: "none",
+        }}
+        tabIndex={-1}
+        aria-hidden
+      />
 
-      {/* Corner marks */}
-      {[
-        { top: 0, left: 0, borderTop: "2px solid #C49A3C", borderLeft: "2px solid #C49A3C" },
-        { top: 0, right: 0, borderTop: "2px solid #C49A3C", borderRight: "2px solid #C49A3C" },
-        { bottom: 0, left: 0, borderBottom: "2px solid #C49A3C", borderLeft: "2px solid #C49A3C" },
-        { bottom: 0, right: 0, borderBottom: "2px solid #C49A3C", borderRight: "2px solid #C49A3C" },
-      ].map((s, i) => (
-        <div key={i} style={{ position: "absolute", width: "10px", height: "10px", ...s }} />
-      ))}
-
-      {/* Simulated document content */}
-      <div style={{ padding: "10% 12%", display: "flex", flexDirection: "column", gap: "5%" }}>
-        {/* Name block */}
-        <div style={{ marginBottom: "2%" }}>
-          <div style={{ height: "clamp(6px,1.4%,14px)", background: "#1C1A14", width: "70%", marginBottom: "4px", opacity: 0.75 }} />
-          <div style={{ height: "clamp(3px,0.7%,7px)", background: "#C49A3C", width: "45%", opacity: 0.55 }} />
-        </div>
-        {/* Gold rule */}
-        <div style={{ height: "1px", background: "rgba(196,154,60,0.5)", marginBottom: "2%" }} />
-        {/* Text lines */}
-        {[90, 75, 80, 60, 85, 70, 55, 78, 65, 88, 72, 58].map((w, i) => (
-          <div key={i} style={{ height: "clamp(2px,0.55%,5px)", background: "#1C1A14", width: `${w}%`, opacity: 0.2 + (i % 3) * 0.07 }} />
-        ))}
-        {/* Second section header */}
-        <div style={{ height: "clamp(4px,0.9%,9px)", background: "#1C1A14", width: "40%", opacity: 0.5, marginTop: "3%" }} />
-        {[82, 68, 75, 90, 60, 72].map((w, i) => (
-          <div key={i} style={{ height: "clamp(2px,0.55%,5px)", background: "#1C1A14", width: `${w}%`, opacity: 0.15 + (i % 2) * 0.07 }} />
-        ))}
-      </div>
-
-      {/* "CLICK TO VIEW" overlay badge */}
+      {/* "CLICK TO VIEW" badge */}
       <div
         style={{
           position: "absolute",
@@ -84,7 +92,7 @@ function ResumeThumbnail({ onClick }: { onClick: () => void }) {
           alignItems: "flex-end",
           justifyContent: "center",
           paddingBottom: "14px",
-          background: hovered ? "rgba(242,235,217,0.08)" : "transparent",
+          background: hovered ? "rgba(28,26,20,0.06)" : "transparent",
           transition: "background 0.22s ease",
         }}
       >
@@ -94,8 +102,8 @@ function ResumeThumbnail({ onClick }: { onClick: () => void }) {
             fontSize: "8px",
             letterSpacing: "0.22em",
             color: "#C49A3C",
-            background: "rgba(242,235,217,0.92)",
-            border: "1px solid rgba(196,154,60,0.4)",
+            background: "rgba(242,235,217,0.95)",
+            border: "1px solid rgba(196,154,60,0.45)",
             padding: "4px 12px",
           }}
         >
@@ -137,8 +145,9 @@ function GoldRule() {
 
 /* ── Combined Resume + Contact section ───────────────────────────────────── */
 export default function ResumeAndContact() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const sectionRef = useRef(null);
+  const thumbnailContainerRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(sectionRef, { once: true, margin: "-80px" });
   const reduced = useReducedMotion();
   const [open, setOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -174,16 +183,16 @@ export default function ResumeAndContact() {
       </div>
 
       <div
-        ref={ref}
+        ref={sectionRef}
         style={{ maxWidth: "1152px", margin: "0 auto", padding: "0 56px" }}
       >
-        {/* Two-column grid: resume left, contact right */}
+        {/* Two-column grid — both columns stretch to the same height */}
         <div
           className="grid grid-cols-1 md:grid-cols-2"
-          style={{ gap: "clamp(48px, 6vw, 96px)", alignItems: "start" }}
+          style={{ gap: "clamp(48px, 6vw, 96px)", alignItems: "stretch" }}
         >
-          {/* LEFT — Resume */}
-          <div id="resume">
+          {/* LEFT — Resume: flex column so thumbnail fills remaining height */}
+          <div id="resume" style={{ display: "flex", flexDirection: "column" }}>
             <motion.p
               {...anim(0)}
               className="font-mono"
@@ -192,8 +201,13 @@ export default function ResumeAndContact() {
               RESUME
             </motion.p>
 
-            <motion.div {...anim(0.07)} style={{ marginBottom: "20px" }}>
-              <ResumeThumbnail onClick={handleOpen} />
+            {/* Thumbnail — fills flex space to match contact block height */}
+            <motion.div
+              {...anim(0.07)}
+              ref={thumbnailContainerRef}
+              style={{ flex: 1, minHeight: 0 }}
+            >
+              <ResumeThumbnail onClick={handleOpen} containerRef={thumbnailContainerRef} />
             </motion.div>
 
             <motion.a
@@ -207,8 +221,7 @@ export default function ResumeAndContact() {
                 color: "#1C1A14",
                 opacity: 0.45,
                 textDecoration: "none",
-                display: "inline-flex",
-                marginTop: "8px",
+                marginTop: "12px",
               }}
               onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = "0.8"; }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = "0.45"; }}
@@ -230,7 +243,7 @@ export default function ResumeAndContact() {
             <motion.div
               {...anim(0.1)}
               className="relative p-10 flex flex-col"
-              style={{ border: "1px solid rgba(196,154,60,0.5)" }}
+              style={{ border: "1px solid rgba(196,154,60,0.5)", flex: 1 }}
             >
               <CornerMarks />
 
