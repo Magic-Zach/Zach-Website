@@ -140,57 +140,63 @@ function ArtDecoBackground() {
 }
 
 /* ── Name display via SVG — equal width + ultra-thick glyphs ────────────── */
+/* NameDisplay fills whatever height its container gives it via preserveAspectRatio="none".
+   Since both words already have textLength="1000" stretching them full width, vertical
+   scaling just makes the letterforms taller/bolder — no distortion of relative proportions. */
 function NameDisplay() {
   const font = "var(--font-display-name), Anton, Impact, sans-serif";
-  /* Taller viewBox so ZACH+LIPKIN block fills roughly the same height as
-     the portrait image (clamp 200-330px wide × 4:3 ratio = 267-440px tall).
-     At a typical 800px left-column width: 800 × (500/1000) = 400px SVG height,
-     plus the divider and tagline, totals ≈ portrait height. */
   return (
-    <svg
-      viewBox="0 0 1000 500"
-      width="100%"
-      style={{ display: "block", overflow: "visible" }}
-      role="img"
-      aria-label="Zach Lipkin"
-    >
-      <defs>
-        <filter id="name-shadow" x="-4%" y="-10%" width="112%" height="130%">
-          <feDropShadow dx="2" dy="4" stdDeviation="0" floodColor="#C49A3C" floodOpacity="0.28" />
-          <feDropShadow dx="4" dy="8" stdDeviation="10" floodColor="#1C1A14" floodOpacity="0.10" />
-        </filter>
-      </defs>
+    <div style={{ flex: 1, position: "relative", minHeight: "160px" }}>
+      <svg
+        viewBox="0 0 1000 500"
+        preserveAspectRatio="none"
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          display: "block",
+          overflow: "visible",
+        }}
+        role="img"
+        aria-label="Zach Lipkin"
+      >
+        <defs>
+          <filter id="name-shadow" x="-4%" y="-10%" width="112%" height="130%">
+            <feDropShadow dx="2" dy="4" stdDeviation="0" floodColor="#C49A3C" floodOpacity="0.28" />
+            <feDropShadow dx="4" dy="8" stdDeviation="10" floodColor="#1C1A14" floodOpacity="0.10" />
+          </filter>
+        </defs>
 
-      {/* ZACH */}
-      <text
-        x="0" y="235"
-        textLength="1000"
-        lengthAdjust="spacingAndGlyphs"
-        fontSize="240"
-        fontFamily={font}
-        fontWeight="900"
-        fill="#1C1A14"
-        stroke="#1C1A14"
-        strokeWidth="2"
-        paintOrder="stroke fill"
-        filter="url(#name-shadow)"
-      >ZACH</text>
+        <text
+          x="0" y="235"
+          textLength="1000"
+          lengthAdjust="spacingAndGlyphs"
+          fontSize="240"
+          fontFamily={font}
+          fontWeight="900"
+          fill="#1C1A14"
+          stroke="#1C1A14"
+          strokeWidth="2"
+          paintOrder="stroke fill"
+          filter="url(#name-shadow)"
+        >ZACH</text>
 
-      {/* LIPKIN */}
-      <text
-        x="0" y="490"
-        textLength="1000"
-        lengthAdjust="spacingAndGlyphs"
-        fontSize="240"
-        fontFamily={font}
-        fontWeight="900"
-        fill="#1C1A14"
-        stroke="#1C1A14"
-        strokeWidth="2"
-        paintOrder="stroke fill"
-        filter="url(#name-shadow)"
-      >LIPKIN</text>
-    </svg>
+        <text
+          x="0" y="490"
+          textLength="1000"
+          lengthAdjust="spacingAndGlyphs"
+          fontSize="240"
+          fontFamily={font}
+          fontWeight="900"
+          fill="#1C1A14"
+          stroke="#1C1A14"
+          strokeWidth="2"
+          paintOrder="stroke fill"
+          filter="url(#name-shadow)"
+        >LIPKIN</text>
+      </svg>
+    </div>
   );
 }
 
@@ -226,34 +232,16 @@ export default function Hero() {
 
       {/* ── Main content ─────────────────────────────────────────────────── */}
       <div className="relative z-20 w-full max-w-6xl mx-auto px-10 sm:px-16">
-        <div className="flex flex-col md:flex-row items-center">
+        <div className="flex flex-col md:flex-row items-stretch">
 
-          {/* LEFT — Name + Tagline */}
+          {/* LEFT — Name fills portrait height */}
           <motion.div
-            className="flex-1 flex flex-col justify-center relative z-10 min-w-0"
+            className="flex-1 flex flex-col relative z-10 min-w-0"
             initial={prefersReducedMotion ? false : { opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
             <NameDisplay />
-
-            <div className="mt-5 mb-5" style={{ height: "1px", background: "rgba(196,154,60,0.45)" }} />
-
-            {/* Tagline — bigger */}
-            <p
-              className="font-display italic"
-              style={{
-                fontFamily: "var(--font-cormorant)",
-                fontSize: "clamp(20px, 2.6vw, 32px)",
-                color: "#1C1A14",
-                opacity: 0.72,
-                fontWeight: 400,
-                whiteSpace: "nowrap",
-                lineHeight: 1.3,
-              }}
-            >
-              Consultant. Builder. Magician. Perpetually curious.
-            </p>
           </motion.div>
 
           {/* RIGHT — Portrait, no frame, mix-blend removes bg, overlaps name */}
