@@ -7,11 +7,10 @@ import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 const NAV_LINKS = [
-  { label: "Intro",    href: "#hero" },
-  { label: "Story",    href: "#my-story" },
-  { label: "Thinking", href: "#my-thinking" },
-  { label: "Resume",   href: "#resume" },
-  { label: "Contact",  href: "#contact" },
+  { label: "Intro",   href: "#hero" },
+  { label: "Story",   href: "#my-story" },
+  { label: "Resume",  href: "#resume" },
+  { label: "Contact", href: "#contact" },
 ];
 
 const SECTION_IDS = NAV_LINKS.map((l) => l.href.replace("#", ""));

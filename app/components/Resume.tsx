@@ -4,23 +4,42 @@ import { useRef, useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { motion, useInView, useReducedMotion, AnimatePresence } from "framer-motion";
 
-const RESUME_URL = "/resume.pdf";
+const RESUME_URL = "/Resume.pdf";
 
-/* Lazy-load the modal so the PDF iframe isn't part of the initial bundle */
 const PDFModal = dynamic(() => import("./PDFModal"), { ssr: false });
 
+const CONTACT_LINKS = [
+  { label: "Email",    href: "mailto:zach.lipkin@gmail.com",        display: "zach.lipkin@gmail.com" },
+  { label: "LinkedIn", href: "https://linkedin.com/in/zachlipkin",  display: "linkedin.com/in/zachlipkin" },
+  { label: "Substack", href: "https://substack.com/@zachlipkin",    display: "substack.com/@zachlipkin" },
+];
+
 /* ── Decorative document thumbnail ──────────────────────────────────────── */
-function ResumeThumbnail() {
+function ResumeThumbnail({ onClick }: { onClick: () => void }) {
+  const [hovered, setHovered] = useState(false);
+
   return (
     <div
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === "Enter" && onClick()}
+      aria-label="View resume"
       style={{
-        width: "clamp(200px, 28vw, 320px)",
+        width: "clamp(180px, 22vw, 290px)",
         aspectRatio: "8.5/11",
         background: "#FDFAF4",
-        border: "1px solid rgba(196,154,60,0.45)",
+        border: `1px solid rgba(196,154,60,${hovered ? 0.7 : 0.45})`,
         position: "relative",
-        boxShadow: "4px 6px 24px rgba(28,26,20,0.14)",
+        boxShadow: hovered
+          ? "6px 10px 32px rgba(28,26,20,0.2)"
+          : "4px 6px 24px rgba(28,26,20,0.14)",
         overflow: "hidden",
+        cursor: "pointer",
+        transform: hovered ? "translateY(-4px)" : "translateY(0)",
+        transition: "box-shadow 0.22s ease, border-color 0.22s ease, transform 0.22s ease",
       }}
     >
       {/* Inner frame */}
@@ -37,30 +56,87 @@ function ResumeThumbnail() {
       ))}
 
       {/* Simulated document content */}
-      <div style={{ padding: "10% 12%", display: "flex", flexDirection: "column", gap: "6%" }}>
+      <div style={{ padding: "10% 12%", display: "flex", flexDirection: "column", gap: "5%" }}>
         {/* Name block */}
         <div style={{ marginBottom: "2%" }}>
-          <div style={{ height: "clamp(6px,1.4%,14px)", background: "#1C1A14", width: "70%", marginBottom: "4px", opacity: 0.85 }} />
-          <div style={{ height: "clamp(3px,0.7%,7px)", background: "#C49A3C", width: "45%", opacity: 0.6 }} />
+          <div style={{ height: "clamp(6px,1.4%,14px)", background: "#1C1A14", width: "70%", marginBottom: "4px", opacity: 0.75 }} />
+          <div style={{ height: "clamp(3px,0.7%,7px)", background: "#C49A3C", width: "45%", opacity: 0.55 }} />
         </div>
         {/* Gold rule */}
         <div style={{ height: "1px", background: "rgba(196,154,60,0.5)", marginBottom: "2%" }} />
         {/* Text lines */}
         {[90, 75, 80, 60, 85, 70, 55, 78, 65, 88, 72, 58].map((w, i) => (
-          <div key={i} style={{ height: "clamp(2px,0.55%,5px)", background: "#1C1A14", width: `${w}%`, opacity: 0.18 + (i % 3) * 0.06 }} />
+          <div key={i} style={{ height: "clamp(2px,0.55%,5px)", background: "#1C1A14", width: `${w}%`, opacity: 0.2 + (i % 3) * 0.07 }} />
         ))}
-        {/* Second section */}
-        <div style={{ height: "clamp(4px,0.9%,9px)", background: "#1C1A14", width: "40%", opacity: 0.55, marginTop: "3%" }} />
+        {/* Second section header */}
+        <div style={{ height: "clamp(4px,0.9%,9px)", background: "#1C1A14", width: "40%", opacity: 0.5, marginTop: "3%" }} />
         {[82, 68, 75, 90, 60, 72].map((w, i) => (
-          <div key={i} style={{ height: "clamp(2px,0.55%,5px)", background: "#1C1A14", width: `${w}%`, opacity: 0.14 + (i % 2) * 0.06 }} />
+          <div key={i} style={{ height: "clamp(2px,0.55%,5px)", background: "#1C1A14", width: `${w}%`, opacity: 0.15 + (i % 2) * 0.07 }} />
         ))}
+      </div>
+
+      {/* "CLICK TO VIEW" overlay badge */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          display: "flex",
+          alignItems: "flex-end",
+          justifyContent: "center",
+          paddingBottom: "14px",
+          background: hovered ? "rgba(242,235,217,0.08)" : "transparent",
+          transition: "background 0.22s ease",
+        }}
+      >
+        <span
+          className="font-mono"
+          style={{
+            fontSize: "8px",
+            letterSpacing: "0.22em",
+            color: "#C49A3C",
+            background: "rgba(242,235,217,0.92)",
+            border: "1px solid rgba(196,154,60,0.4)",
+            padding: "4px 12px",
+          }}
+        >
+          CLICK TO VIEW
+        </span>
       </div>
     </div>
   );
 }
 
-/* ── Section ─────────────────────────────────────────────────────────────── */
-export default function Resume() {
+/* ── Art Deco corner marks ───────────────────────────────────────────────── */
+function CornerMarks() {
+  return (
+    <>
+      {[
+        { top: 0, left: 0, borderTop: "2px solid #C49A3C", borderLeft: "2px solid #C49A3C" },
+        { top: 0, right: 0, borderTop: "2px solid #C49A3C", borderRight: "2px solid #C49A3C" },
+        { bottom: 0, left: 0, borderBottom: "2px solid #C49A3C", borderLeft: "2px solid #C49A3C" },
+        { bottom: 0, right: 0, borderBottom: "2px solid #C49A3C", borderRight: "2px solid #C49A3C" },
+      ].map((pos, i) => (
+        <div key={i} className="absolute w-4 h-4" style={pos} />
+      ))}
+    </>
+  );
+}
+
+/* ── Gold diamond divider ────────────────────────────────────────────────── */
+function GoldRule() {
+  return (
+    <div className="flex items-center" style={{ marginBottom: "56px" }}>
+      <div style={{ height: "1px", flex: 1, background: "rgba(196,154,60,0.35)" }} />
+      <svg width="10" height="10" style={{ margin: "0 12px", flexShrink: 0 }}>
+        <polygon points="5,0 10,5 5,10 0,5" fill="#C49A3C" />
+      </svg>
+      <div style={{ height: "1px", flex: 1, background: "rgba(196,154,60,0.35)" }} />
+    </div>
+  );
+}
+
+/* ── Combined Resume + Contact section ───────────────────────────────────── */
+export default function ResumeAndContact() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const reduced = useReducedMotion();
@@ -92,95 +168,36 @@ export default function Resume() {
         };
 
   return (
-    <section id="resume" style={{ background: "#F2EBD9", padding: "80px 0 96px" }}>
-      {/* Gold divider from previous section */}
-      <div className="flex items-center" style={{ maxWidth: "1152px", margin: "0 auto 60px", padding: "0 56px" }}>
-        <div style={{ height: "1px", flex: 1, background: "rgba(196,154,60,0.35)" }} />
-        <svg width="10" height="10" style={{ margin: "0 12px", flexShrink: 0 }}>
-          <polygon points="5,0 10,5 5,10 0,5" fill="#C49A3C" />
-        </svg>
-        <div style={{ height: "1px", flex: 1, background: "rgba(196,154,60,0.35)" }} />
+    <div style={{ background: "#F2EBD9", padding: "80px 0 96px" }}>
+      <div style={{ maxWidth: "1152px", margin: "0 auto", padding: "0 56px" }}>
+        <GoldRule />
       </div>
 
-      <div ref={ref} style={{ maxWidth: "1152px", margin: "0 auto", padding: "0 56px" }}>
-        {/* Header */}
-        <motion.p
-          {...anim(0)}
-          className="font-mono"
-          style={{ fontSize: "9px", letterSpacing: "0.28em", color: "#C49A3C", marginBottom: "16px" }}
+      <div
+        ref={ref}
+        style={{ maxWidth: "1152px", margin: "0 auto", padding: "0 56px" }}
+      >
+        {/* Two-column grid: resume left, contact right */}
+        <div
+          className="grid grid-cols-1 md:grid-cols-2"
+          style={{ gap: "clamp(48px, 6vw, 96px)", alignItems: "start" }}
         >
-          RESUME
-        </motion.p>
-
-        <motion.h2
-          {...anim(0.07)}
-          className="font-display italic"
-          style={{
-            fontFamily: "var(--font-cormorant)",
-            fontSize: "clamp(32px, 5vw, 56px)",
-            fontWeight: 400,
-            color: "#1C1A14",
-            lineHeight: 1.1,
-            marginBottom: "12px",
-          }}
-        >
-          Background, in full.
-        </motion.h2>
-
-        <motion.p
-          {...anim(0.12)}
-          style={{
-            fontSize: "15px",
-            lineHeight: 1.65,
-            color: "#1C1A14",
-            opacity: 0.6,
-            maxWidth: "460px",
-            marginBottom: "52px",
-            fontFamily: "var(--font-dm-sans)",
-          }}
-        >
-          Click to view or download. Opens in a new tab on mobile.
-        </motion.p>
-
-        {/* Thumbnail + CTA */}
-        <motion.div {...anim(0.18)} className="flex flex-col sm:flex-row items-start sm:items-center gap-10">
-          <motion.button
-            onClick={handleOpen}
-            style={{ background: "transparent", border: "none", padding: 0, cursor: "pointer" }}
-            whileHover={reduced ? {} : { y: -4, boxShadow: "6px 10px 32px rgba(28,26,20,0.2)" }}
-            transition={{ duration: 0.22, ease: "easeOut" }}
-            aria-label="View resume"
-          >
-            <ResumeThumbnail />
-          </motion.button>
-
-          <div className="flex flex-col gap-4">
-            <button
-              onClick={handleOpen}
-              className="font-mono inline-flex items-center gap-3"
-              style={{
-                fontSize: "10px",
-                letterSpacing: "0.18em",
-                color: "#C49A3C",
-                background: "transparent",
-                border: "1px solid rgba(196,154,60,0.5)",
-                padding: "14px 28px",
-                cursor: "pointer",
-                transition: "all 0.2s",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.background = "#FBF7EE";
-                (e.currentTarget as HTMLElement).style.borderColor = "rgba(196,154,60,0.85)";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.background = "transparent";
-                (e.currentTarget as HTMLElement).style.borderColor = "rgba(196,154,60,0.5)";
-              }}
+          {/* LEFT — Resume */}
+          <div id="resume">
+            <motion.p
+              {...anim(0)}
+              className="font-mono"
+              style={{ fontSize: "9px", letterSpacing: "0.28em", color: "#C49A3C", marginBottom: "28px" }}
             >
-              VIEW RESUME →
-            </button>
+              RESUME
+            </motion.p>
 
-            <a
+            <motion.div {...anim(0.07)} style={{ marginBottom: "20px" }}>
+              <ResumeThumbnail onClick={handleOpen} />
+            </motion.div>
+
+            <motion.a
+              {...anim(0.12)}
               href={RESUME_URL}
               download="Zach_Lipkin_Resume.pdf"
               className="font-mono inline-flex items-center gap-2"
@@ -190,21 +207,95 @@ export default function Resume() {
                 color: "#1C1A14",
                 opacity: 0.45,
                 textDecoration: "none",
-                transition: "opacity 0.2s",
+                display: "inline-flex",
+                marginTop: "8px",
               }}
               onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = "0.8"; }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = "0.45"; }}
             >
               ↓ DOWNLOAD PDF
-            </a>
+            </motion.a>
           </div>
-        </motion.div>
+
+          {/* RIGHT — Contact */}
+          <div id="contact" style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", paddingTop: "4px" }}>
+            <motion.p
+              {...anim(0.04)}
+              className="font-mono"
+              style={{ fontSize: "9px", letterSpacing: "0.28em", color: "#C49A3C", marginBottom: "28px" }}
+            >
+              CONTACT
+            </motion.p>
+
+            <motion.div
+              {...anim(0.1)}
+              className="relative p-10 flex flex-col"
+              style={{ border: "1px solid rgba(196,154,60,0.5)" }}
+            >
+              <CornerMarks />
+
+              <motion.h2
+                {...anim(0.16)}
+                className="font-display italic mb-4 leading-tight"
+                style={{
+                  fontFamily: "var(--font-cormorant)",
+                  fontSize: "clamp(28px, 3.5vw, 44px)",
+                  fontWeight: 400,
+                  color: "#1C1A14",
+                }}
+              >
+                Say hello.
+              </motion.h2>
+
+              <motion.p
+                {...anim(0.2)}
+                className="text-sm leading-relaxed mb-8"
+                style={{ color: "#1C1A14", opacity: 0.65, fontFamily: "var(--font-dm-sans)" }}
+              >
+                Always happy to talk startups, magic,
+                <br />
+                or anything in between.
+              </motion.p>
+
+              <motion.div {...anim(0.26)} className="flex flex-col gap-3">
+                {CONTACT_LINKS.map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    target={link.href.startsWith("mailto") ? undefined : "_blank"}
+                    rel={link.href.startsWith("mailto") ? undefined : "noopener noreferrer"}
+                    className="group flex items-center justify-between px-4 py-3 transition-all duration-200"
+                    style={{
+                      border: "1px solid rgba(196,154,60,0.3)",
+                      textDecoration: "none",
+                      background: "transparent",
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLElement).style.background = "#EDE7D5";
+                      (e.currentTarget as HTMLElement).style.borderColor = "rgba(196,154,60,0.7)";
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLElement).style.background = "transparent";
+                      (e.currentTarget as HTMLElement).style.borderColor = "rgba(196,154,60,0.3)";
+                    }}
+                  >
+                    <span className="font-mono" style={{ fontSize: "9px", letterSpacing: "0.15em", color: "#C49A3C" }}>
+                      {link.label.toUpperCase()}
+                    </span>
+                    <span className="text-sm" style={{ color: "#1C1A14", opacity: 0.6, fontFamily: "var(--font-dm-sans)" }}>
+                      {link.display}
+                    </span>
+                  </a>
+                ))}
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
       </div>
 
-      {/* Modal (desktop only) */}
       <AnimatePresence>
         {open && <PDFModal url={RESUME_URL} onClose={() => setOpen(false)} />}
       </AnimatePresence>
-    </section>
+    </div>
   );
 }

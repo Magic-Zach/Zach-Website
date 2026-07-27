@@ -184,16 +184,16 @@ function ChapterPanel({
   const isLast = index === n - 1;
 
   /* Fade thresholds — last chapter special-cased:
-     it enters view at progress≈0.5 and should NOT fade out (no next chapter). */
-  const inStart  = isLast ? 0.5  : Math.max(0, (index - 0.6) / n);
-  const inEnd    = isLast ? 0.85 : (index + 0.2) / n;
-  const outStart = isLast ? 1.0  : (index + 0.65) / n;
-  const outEnd   = isLast ? 1.0  : Math.min(1, (index + 1.2) / n);
+     stays at full opacity always (no fade-in ramp, no fade-out). */
+  const inStart  = isLast ? 0.0   : Math.max(0, (index - 0.6) / n);
+  const inEnd    = isLast ? 0.001 : (index + 0.2) / n;
+  const outStart = isLast ? 0.999 : (index + 0.65) / n;
+  const outEnd   = isLast ? 1.0   : Math.min(1, (index + 1.2) / n);
 
   const opacity = useTransform(
     scrollYProgress,
     [inStart, inEnd, outStart, outEnd],
-    [index === 0 ? 1 : 0.2, 1, 1, 0.2]
+    isLast ? [1, 1, 1, 1] : [index === 0 ? 1 : 0.2, 1, 1, 0.2]
   );
   const yText = useTransform(
     scrollYProgress,

@@ -80,7 +80,7 @@ export default function PDFModal({ url, onClose }: { url: string; onClose: () =>
       {/* PDF iframe */}
       <div className="flex-1 min-h-0" onClick={(e) => e.stopPropagation()}>
         <iframe
-          src={`${url}#toolbar=0`}
+          src={url}
           title="Resume PDF"
           style={{ width: "100%", height: "100%", border: "none", display: "block" }}
         />
