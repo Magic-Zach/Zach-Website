@@ -276,7 +276,7 @@ export default function Hero() {
         animate={{ opacity: 1 }}
         transition={{ delay: 1.0, duration: 0.6 }}
       >
-        <span className="font-mono" style={{ fontSize: "9px", letterSpacing: "0.22em", color: "#1C1A14", opacity: 0.3 }}>
+        <span className="font-mono" style={{ fontSize: "11px", letterSpacing: "0.22em", color: "#1C1A14", opacity: 0.3 }}>
           SCROLL
         </span>
         <motion.div

@@ -14,7 +14,7 @@ const CHAPTERS = [
     number: "I",
     label: "GROWING UP",
     accent: "#9B8EC4",
-    title: "Growing up curious",
+    title: "Growing Up Curious",
     paragraphs: [
       "I grew up in a pretty suburb of Detroit, Michigan, in a family of doctors. Seeing that my parents saved lives… I wanted to have a meaningful impact too.",
       "I've always been drawn to the foundational, human-level things like health, energy, financial wellbeing, fun, etc. but I couldn't choose just one, because they all mattered and I didn't want to ignore any.",
@@ -137,7 +137,7 @@ function FlipImageCard({ src, label, caption, accent }: { src: string | null; la
               position: "absolute",
               bottom: "6px",
               right: "8px",
-              fontSize: "8px",
+              fontSize: "10px",
               letterSpacing: "0.1em",
               color: "#fff",
               background: "rgba(0,0,0,0.45)",
@@ -152,7 +152,7 @@ function FlipImageCard({ src, label, caption, accent }: { src: string | null; la
       </div>
 
       {/* Label below — high contrast gold */}
-      <span className="font-mono" style={{ fontSize: "9px", letterSpacing: "0.15em", color: accent }}>
+      <span className="font-mono" style={{ fontSize: "11px", letterSpacing: "0.12em", color: accent }}>
         {label}
       </span>
     </div>
@@ -225,11 +225,11 @@ function ChapterPanel({
         className="flex-shrink-0 flex items-center gap-4"
         style={{ padding: "20px 56px 12px" }}
       >
-        <span className="font-mono" style={{ fontSize: "10px", letterSpacing: "0.22em", color: chapter.accent }}>
+        <span className="font-mono" style={{ fontSize: "12px", letterSpacing: "0.18em", color: chapter.accent }}>
           CHAPTER {chapter.number}
         </span>
         <div style={{ height: "1px", flex: 1, background: chapter.accent, opacity: 0.22 }} />
-        <span className="font-mono" style={{ fontSize: "10px", letterSpacing: "0.18em", color: "#1C1A14", opacity: 0.28 }}>
+        <span className="font-mono" style={{ fontSize: "12px", letterSpacing: "0.14em", color: "#1C1A14", opacity: 0.28 }}>
           {chapter.label}
         </span>
       </div>
@@ -317,7 +317,7 @@ function ChapterPanel({
           <div style={{ marginTop: "4px" }}>
             {/* "Side Notes" label + divider */}
             <div className="flex items-center gap-3" style={{ marginBottom: "14px" }}>
-              <span className="font-mono" style={{ fontSize: "8px", letterSpacing: "0.22em", color: "#1C1A14", opacity: 0.35, whiteSpace: "nowrap" }}>
+              <span className="font-mono" style={{ fontSize: "11px", letterSpacing: "0.22em", color: "#1C1A14", opacity: 0.35, whiteSpace: "nowrap" }}>
                 SIDE NOTES
               </span>
               <div style={{ height: "1px", flex: 1, background: "rgba(196,154,60,0.2)" }} />
@@ -378,10 +378,10 @@ export default function MyStory() {
             className="absolute top-0 left-0 right-0 flex items-center justify-between pointer-events-none"
             style={{ zIndex: 20, padding: "10px 56px 0" }}
           >
-            <span className="font-mono" style={{ fontSize: "8px", letterSpacing: "0.3em", color: "#1C1A14", opacity: 0.18 }}>
+            <span className="font-mono" style={{ fontSize: "11px", letterSpacing: "0.3em", color: "#1C1A14", opacity: 0.18 }}>
               MY STORY
             </span>
-            <span className="font-mono" style={{ fontSize: "8px", letterSpacing: "0.2em", color: "#1C1A14", opacity: 0.18 }}>
+            <span className="font-mono" style={{ fontSize: "11px", letterSpacing: "0.2em", color: "#1C1A14", opacity: 0.18 }}>
               SCROLL TO EXPLORE →
             </span>
           </div>
@@ -444,7 +444,7 @@ export default function MyStory() {
       {/* ── Mobile: chapters stacked vertically ────────────────────────── */}
       <section id="my-story" className="block md:hidden" style={{ background: "#F2EBD9" }}>
         <div style={{ padding: "12px 24px 4px" }}>
-          <span className="font-mono" style={{ fontSize: "8px", letterSpacing: "0.3em", color: "#1C1A14", opacity: 0.2 }}>
+          <span className="font-mono" style={{ fontSize: "11px", letterSpacing: "0.3em", color: "#1C1A14", opacity: 0.2 }}>
             MY STORY
           </span>
         </div>
@@ -454,7 +454,7 @@ export default function MyStory() {
             style={{ borderTop: `1px solid ${chapter.accent}33`, padding: "32px 24px 40px" }}
           >
             <div className="flex items-center gap-3 mb-5">
-              <span className="font-mono" style={{ fontSize: "9px", letterSpacing: "0.2em", color: chapter.accent }}>
+              <span className="font-mono" style={{ fontSize: "11px", letterSpacing: "0.2em", color: chapter.accent }}>
                 CHAPTER {chapter.number}
               </span>
               <div style={{ height: "1px", flex: 1, background: chapter.accent, opacity: 0.2 }} />
@@ -483,7 +483,7 @@ export default function MyStory() {
             ))}
             <div style={{ marginTop: "20px" }}>
               <div className="flex items-center gap-3" style={{ marginBottom: "12px" }}>
-                <span className="font-mono" style={{ fontSize: "8px", letterSpacing: "0.22em", color: "#1C1A14", opacity: 0.35 }}>
+                <span className="font-mono" style={{ fontSize: "11px", letterSpacing: "0.22em", color: "#1C1A14", opacity: 0.35 }}>
                   SIDE NOTES
                 </span>
                 <div style={{ height: "1px", flex: 1, background: "rgba(196,154,60,0.2)" }} />

@@ -52,7 +52,7 @@ function ResumeThumbnail({ onClick, containerRef }: { onClick: () => void; conta
       aria-label="View resume"
       style={{
         width: "100%",
-        height: `${scaledH}px`,
+        height: "100%",
         background: "#fff",
         border: `1px solid rgba(196,154,60,${hovered ? 0.7 : 0.45})`,
         position: "relative",
@@ -65,9 +65,10 @@ function ResumeThumbnail({ onClick, containerRef }: { onClick: () => void; conta
         transition: "box-shadow 0.22s ease, border-color 0.22s ease, transform 0.22s ease",
       }}
     >
-      {/* Scaled-down real PDF — pointer-events off so clicks pass through */}
+      {/* Scaled-down real PDF — pointer-events off so clicks pass through.
+          #toolbar=0&navpanes=0 hides the viewer chrome in Chrome/Edge. */}
       <iframe
-        src={RESUME_URL}
+        src={`${RESUME_URL}#toolbar=0&navpanes=0`}
         title="Resume preview"
         style={{
           width: `${PDF_W}px`,
@@ -99,8 +100,8 @@ function ResumeThumbnail({ onClick, containerRef }: { onClick: () => void; conta
         <span
           className="font-mono"
           style={{
-            fontSize: "8px",
-            letterSpacing: "0.22em",
+            fontSize: "10px",
+            letterSpacing: "0.18em",
             color: "#C49A3C",
             background: "rgba(242,235,217,0.95)",
             border: "1px solid rgba(196,154,60,0.45)",
@@ -196,7 +197,7 @@ export default function ResumeAndContact() {
             <motion.p
               {...anim(0)}
               className="font-mono"
-              style={{ fontSize: "9px", letterSpacing: "0.28em", color: "#C49A3C", marginBottom: "28px" }}
+              style={{ fontSize: "11px", letterSpacing: "0.22em", color: "#C49A3C", marginBottom: "28px" }}
             >
               RESUME
             </motion.p>
@@ -216,7 +217,7 @@ export default function ResumeAndContact() {
               download="Zach_Lipkin_Resume.pdf"
               className="font-mono inline-flex items-center gap-2"
               style={{
-                fontSize: "9px",
+                fontSize: "11px",
                 letterSpacing: "0.14em",
                 color: "#1C1A14",
                 opacity: 0.45,
@@ -235,7 +236,7 @@ export default function ResumeAndContact() {
             <motion.p
               {...anim(0.04)}
               className="font-mono"
-              style={{ fontSize: "9px", letterSpacing: "0.28em", color: "#C49A3C", marginBottom: "28px" }}
+              style={{ fontSize: "11px", letterSpacing: "0.22em", color: "#C49A3C", marginBottom: "28px" }}
             >
               CONTACT
             </motion.p>
@@ -265,9 +266,7 @@ export default function ResumeAndContact() {
                 className="text-sm leading-relaxed mb-8"
                 style={{ color: "#1C1A14", opacity: 0.65, fontFamily: "var(--font-dm-sans)" }}
               >
-                Always happy to talk startups, magic,
-                <br />
-                or anything in between.
+                Have any questions, feedback, or just want to chat? I&apos;d love to hear from you!
               </motion.p>
 
               <motion.div {...anim(0.26)} className="flex flex-col gap-3">
@@ -292,7 +291,7 @@ export default function ResumeAndContact() {
                       (e.currentTarget as HTMLElement).style.borderColor = "rgba(196,154,60,0.3)";
                     }}
                   >
-                    <span className="font-mono" style={{ fontSize: "9px", letterSpacing: "0.15em", color: "#C49A3C" }}>
+                    <span className="font-mono" style={{ fontSize: "11px", letterSpacing: "0.12em", color: "#C49A3C" }}>
                       {link.label.toUpperCase()}
                     </span>
                     <span className="text-sm" style={{ color: "#1C1A14", opacity: 0.6, fontFamily: "var(--font-dm-sans)" }}>
