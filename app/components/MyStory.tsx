@@ -13,7 +13,7 @@ const CHAPTERS = [
     id: "growing-up",
     number: "I",
     label: "GROWING UP",
-    accent: "#9B8EC4",
+    accent: "#c49a3cff",
     title: "Growing Up Curious",
     paragraphs: [
       "I grew up in a pretty suburb of Detroit, Michigan, in a family of doctors. Seeing that my parents saved lives… I wanted to have a meaningful impact too.",
@@ -30,7 +30,7 @@ const CHAPTERS = [
     id: "michigan",
     number: "II",
     label: "MICHIGAN",
-    accent: "#7FB3D3",
+    accent: "#c49a3cff",
     title: "Studying Business and Big Ideas",
     paragraphs: [
       "I went on to study business (and psychology) at the University of Michigan's Ross School of Business. I loved learning the fundamentals, and quickly became fascinated by how startups were applying them in creative ways to reimagine what's possible, from computing with human DNA to solving nuclear fusion and teaching machines to reason for themselves.",
@@ -48,7 +48,7 @@ const CHAPTERS = [
     id: "building",
     number: "III",
     label: "NOW",
-    accent: "#8AAF8E",
+    accent: "#c49a3cff",
     title: "Driving Business Growth and Impact",
     paragraphs: [
       "I moved to New York and became a business growth strategy consultant at Prophet, helping companies grow revenue (as opposed to cutting costs) across markets and geographies, everything from peanuts and biopharma in America to wealth management in Germany.",
@@ -220,20 +220,6 @@ function ChapterPanel({
         />
       )}
 
-      {/* Chapter label row */}
-      <div
-        className="flex-shrink-0 flex items-center gap-4"
-        style={{ padding: "20px 56px 12px" }}
-      >
-        <span className="font-mono" style={{ fontSize: "12px", letterSpacing: "0.18em", color: chapter.accent }}>
-          CHAPTER {chapter.number}
-        </span>
-        <div style={{ height: "1px", flex: 1, background: chapter.accent, opacity: 0.22 }} />
-        <span className="font-mono" style={{ fontSize: "12px", letterSpacing: "0.14em", color: "#1C1A14", opacity: 0.28 }}>
-          {chapter.label}
-        </span>
-      </div>
-
       {/* Two-column body */}
       <div
         className="flex-1 min-h-0 grid"
@@ -276,9 +262,44 @@ function ChapterPanel({
 
         {/* RIGHT — text + notes */}
         <motion.div
-          style={{ opacity, y: yText }}
+          style={{ opacity, y: yText, position: "relative" }}
           className="flex flex-col justify-center gap-4 min-h-0 py-2"
         >
+          {/* Chapter tracker — sits in the whitespace above the title, top-aligned with the hero image */}
+          <div className="absolute flex items-center gap-3" style={{ top: 0, left: 0 }}>
+            <span className="font-mono" style={{ fontSize: "10px", letterSpacing: "0.24em", color: "#1C1A14", opacity: 0.35 }}>
+              CHAPTER
+            </span>
+            <div className="flex items-center gap-1.5">
+              {CHAPTERS.map((c, i) => {
+                const active = i === index;
+                return (
+                  <div
+                    key={c.id}
+                    className="font-mono flex items-center justify-center"
+                    style={active
+                      ? {
+                          width: "16px",
+                          height: "16px",
+                          fontSize: "9px",
+                          color: "#F2EBD9",
+                          background: chapter.accent,
+                        }
+                      : {
+                          width: "6px",
+                          height: "6px",
+                          background: "#1C1A14",
+                          opacity: 0.18,
+                        }
+                    }
+                  >
+                    {active ? c.number : null}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
           <h2
             className="font-display italic leading-tight"
             style={{
@@ -317,10 +338,10 @@ function ChapterPanel({
           <div style={{ marginTop: "4px" }}>
             {/* "Side Notes" label + divider */}
             <div className="flex items-center gap-3" style={{ marginBottom: "14px" }}>
-              <span className="font-mono" style={{ fontSize: "11px", letterSpacing: "0.22em", color: "#1C1A14", opacity: 0.35, whiteSpace: "nowrap" }}>
+              <span className="font-mono" style={{ fontSize: "11px", letterSpacing: "0.22em", color: "#1C1A14", opacity: 0.50, whiteSpace: "nowrap" }}>
                 SIDE NOTES
               </span>
-              <div style={{ height: "1px", flex: 1, background: "rgba(196,154,60,0.2)" }} />
+              <div style={{ height: "1px", flex: 1, background: "rgba(112, 86, 31, 0.2)" }} />
             </div>
             <div className="flex gap-4" style={{ flexWrap: "wrap" }}>
               {chapter.notes.map((note, i) => (
@@ -345,22 +366,30 @@ export default function MyStory() {
     offset: ["start start", "end end"],
   });
 
-  /* Horizontal track translation: scroll 0→1 moves track 0 → -(n-1)×100vw */
-  const x = useTransform(scrollYProgress, [0, 1], ["0vw", `${-(n - 1) * 100}vw`]);
+  /* Horizontal track translation — mostly smooth, with just a gentle settle at each
+     chapter. Each transition is wide (spans most of the segment) and eased so it
+     accelerates/decelerates instead of snapping abruptly, with only a brief dwell
+     right at the read-point of each chapter. */
+  const segment = 1 / n;
+  const rampHalf = segment * 0.38;
+  const easeFractions = [0, 0.15, 0.5, 0.85, 1]; // smoothstep-like ease-in-out
+  const xTimes: number[] = [0];
+  const xValues: string[] = ["0vw"];
+  for (let k = 1; k < n; k++) {
+    const center = k * segment;
+    const from = -(k - 1) * 100;
+    const to = -k * 100;
+    for (const f of easeFractions) {
+      xTimes.push(center - rampHalf + f * (2 * rampHalf));
+      xValues.push(`${from + f * (to - from)}vw`);
+    }
+  }
+  xTimes.push(1);
+  xValues.push(`${-(n - 1) * 100}vw`);
+  const x = useTransform(scrollYProgress, xTimes, xValues);
 
   /* Progress bar */
   const progressW = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
-
-  /* Chapter dot indicators — pre-computed (no hooks in loops) */
-  const dot0 = useTransform(scrollYProgress, [0, 0.28, 0.36], [1, 1, 0.25]);
-  const dot1 = useTransform(scrollYProgress, [0.28, 0.36, 0.64, 0.72], [0.25, 1, 1, 0.25]);
-  const dot2 = useTransform(scrollYProgress, [0.64, 0.72, 1], [0.25, 1, 1]);
-  const dotOpacities = [dot0, dot1, dot2];
-
-  const dot0w = useTransform(scrollYProgress, [0, 0.28, 0.36], [20, 20, 6]);
-  const dot1w = useTransform(scrollYProgress, [0.28, 0.36, 0.64, 0.72], [6, 20, 20, 6]);
-  const dot2w = useTransform(scrollYProgress, [0.64, 0.72, 1], [6, 20, 20]);
-  const dotWidths = [dot0w, dot1w, dot2w];
 
   return (
     <>
@@ -373,17 +402,15 @@ export default function MyStory() {
       >
         <div style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden", background: "#F2EBD9" }}>
 
-          {/* MY STORY label + scroll hint */}
+          {/* MY STORY label — section header with accent divider */}
           <div
-            className="absolute top-0 left-0 right-0 flex items-center justify-between pointer-events-none"
-            style={{ zIndex: 20, padding: "10px 56px 0" }}
+            className="absolute top-0 left-0 right-0 flex items-center gap-4 pointer-events-none"
+            style={{ zIndex: 20, padding: "18px 56px 0" }}
           >
-            <span className="font-mono" style={{ fontSize: "11px", letterSpacing: "0.3em", color: "#1C1A14", opacity: 0.18 }}>
+            <span className="font-mono" style={{ fontSize: "12px", letterSpacing: "0.32em", color: "#1C1A14", opacity: 0.55 }}>
               MY STORY
             </span>
-            <span className="font-mono" style={{ fontSize: "11px", letterSpacing: "0.2em", color: "#1C1A14", opacity: 0.18 }}>
-              SCROLL TO EXPLORE →
-            </span>
+            <div style={{ height: "1px", flex: 1, background: "rgba(196,154,60,0.4)" }} />
           </div>
 
           {/* Horizontal chapter track */}
@@ -405,29 +432,10 @@ export default function MyStory() {
             ))}
           </motion.div>
 
-          {/* Chapter dot indicators */}
-          <div
-            className="absolute flex items-center gap-2"
-            style={{ bottom: "20px", left: "56px", zIndex: 20 }}
-          >
-            {CHAPTERS.map((_, i) => (
-              <motion.div
-                key={i}
-                style={{
-                  height: "4px",
-                  borderRadius: "2px",
-                  background: "#C49A3C",
-                  width: dotWidths[i],
-                  opacity: dotOpacities[i],
-                }}
-              />
-            ))}
-          </div>
-
           {/* Gold progress line at very bottom */}
           <div
             className="absolute bottom-0 left-0 right-0"
-            style={{ height: "2px", background: "rgba(196,154,60,0.12)", zIndex: 20 }}
+            style={{ height: "5px", background: "rgba(196,154,60,0.18)", zIndex: 20 }}
           >
             <motion.div
               style={{

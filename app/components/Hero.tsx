@@ -269,22 +269,46 @@ export default function Hero() {
 
       </div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        className="relative z-10 mt-10 flex flex-col items-center gap-2"
+      {/* Scroll cue — art-deco box button linking to MyStory */}
+      <motion.a
+        href="#my-story"
+        className="relative z-10 mt-10 flex items-center justify-center gap-2 mx-auto font-mono"
+        style={{
+          width: "fit-content",
+          textDecoration: "none",
+          cursor: "pointer",
+          position: "relative",
+          overflow: "hidden",
+          background: "#1C1A14",
+          border: "1px solid #C49A3C",
+          color: "#F2EBD9",
+          fontSize: "11px",
+          letterSpacing: "0.24em",
+          padding: "10px 22px",
+        }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.0, duration: 0.6 }}
       >
-        <span className="font-mono" style={{ fontSize: "11px", letterSpacing: "0.22em", color: "#1C1A14", opacity: 0.3 }}>
-          SCROLL
-        </span>
-        <motion.div
-          style={{ width: "1px", height: "32px", background: "#C49A3C", opacity: 0.35 }}
-          animate={prefersReducedMotion ? {} : { scaleY: [0.3, 1, 0.3] }}
-          transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
-        />
-      </motion.div>
+        {/* Gold gradient sweep */}
+        {!prefersReducedMotion && (
+          <motion.div
+            aria-hidden
+            style={{
+              position: "absolute",
+              top: 0,
+              bottom: 0,
+              width: "50%",
+              background: "linear-gradient(90deg, transparent, rgba(196,154,60,0.55), transparent)",
+              pointerEvents: "none",
+            }}
+            animate={{ x: ["-120%", "220%"] }}
+            transition={{ repeat: Infinity, duration: 2.6, ease: "linear" }}
+          />
+        )}
+        <span style={{ position: "relative" }}>SCROLL</span>
+        <span style={{ position: "relative", color: "#C49A3C" }}>↓</span>
+      </motion.a>
     </section>
   );
 }

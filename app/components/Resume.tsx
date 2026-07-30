@@ -10,8 +10,7 @@ const PDFModal = dynamic(() => import("./PDFModal"), { ssr: false });
 
 const CONTACT_LINKS = [
   { label: "Email",    href: "mailto:zach.lipkin@gmail.com",        display: "zach.lipkin@gmail.com" },
-  { label: "LinkedIn", href: "https://linkedin.com/in/zachlipkin",  display: "linkedin.com/in/zachlipkin" },
-  { label: "Substack", href: "https://substack.com/@zachlipkin",    display: "substack.com/@zachlipkin" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/zach-lipkin/",  display: "linkedin.com/in/zach-lipkin" },
 ];
 
 /* ── PDF thumbnail via scaled iframe ────────────────────────────────────────
@@ -52,7 +51,7 @@ function ResumeThumbnail({ onClick, containerRef }: { onClick: () => void; conta
       aria-label="View resume"
       style={{
         width: "100%",
-        height: "100%",
+        height: `${scaledH}px`,
         background: "#fff",
         border: `1px solid rgba(196,154,60,${hovered ? 0.7 : 0.45})`,
         position: "relative",
@@ -102,7 +101,7 @@ function ResumeThumbnail({ onClick, containerRef }: { onClick: () => void; conta
           style={{
             fontSize: "10px",
             letterSpacing: "0.18em",
-            color: "#C49A3C",
+            color: "#000000ff",
             background: "rgba(242,235,217,0.95)",
             border: "1px solid rgba(196,154,60,0.45)",
             padding: "4px 12px",
@@ -190,7 +189,7 @@ export default function ResumeAndContact() {
         {/* Two-column grid — both columns stretch to the same height */}
         <div
           className="grid grid-cols-1 md:grid-cols-2"
-          style={{ gap: "clamp(48px, 6vw, 96px)", alignItems: "stretch" }}
+          style={{ gap: "clamp(48px, 6vw, 96px)", alignItems: "start" }}
         >
           {/* LEFT — Resume: flex column so thumbnail fills remaining height */}
           <div id="resume" style={{ display: "flex", flexDirection: "column" }}>
@@ -206,7 +205,7 @@ export default function ResumeAndContact() {
             <motion.div
               {...anim(0.07)}
               ref={thumbnailContainerRef}
-              style={{ flex: 1, minHeight: 0 }}
+              style={{ width: "100%" }}
             >
               <ResumeThumbnail onClick={handleOpen} containerRef={thumbnailContainerRef} />
             </motion.div>
@@ -244,7 +243,7 @@ export default function ResumeAndContact() {
             <motion.div
               {...anim(0.1)}
               className="relative p-10 flex flex-col"
-              style={{ border: "1px solid rgba(196,154,60,0.5)", flex: 1 }}
+              style={{ border: "1px solid rgba(196,154,60,0.5)" }}
             >
               <CornerMarks />
 
