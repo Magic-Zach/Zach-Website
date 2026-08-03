@@ -246,10 +246,9 @@ export default function Hero() {
 
           {/* RIGHT — Portrait, no frame, mix-blend removes bg, overlaps name */}
           <motion.div
-            className="relative flex-shrink-0"
+            className="relative flex-shrink-0 mx-auto md:mx-0 md:ml-[clamp(-60px,-4vw,-40px)]"
             style={{
               width: "clamp(200px, 28vw, 330px)",
-              marginLeft: "clamp(-60px, -4vw, -40px)",
               zIndex: 20,
             }}
             initial={prefersReducedMotion ? false : { opacity: 0, x: 24 }}

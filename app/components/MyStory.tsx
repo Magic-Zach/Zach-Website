@@ -55,7 +55,7 @@ const CHAPTERS = [
       "For the past few years, I've helped Fortune 500 companies innovate and grow by understanding what people need, and figuring out how to meet those needs through unique brand, marketing, and product strategies.",
       "I've learned a ton about how businesses and their leaders think, make decisions, and grow, and I've been excited to apply these learnings alongside AI, using new tools and finding new ways to create impact for clients.",
     ],
-    hero: { src: "/ch3-main.JPG" as string | null, label: "PROPHET — NEW YORK CITY" },
+    hero: { src: "/ch3-main.jpg" as string | null, label: "PROPHET — NEW YORK CITY" },
     notes: [
       { type: "image" as const, src: "/ch3-side1.jpeg" as string | null, label: "NYC EXPLORATION", caption: "Always meeting new people and trying new things, from a data science thesis competition to a sword dancing festival and an origami convention." },
       { type: "image" as const, src: "/ch3-side2.jpeg" as string | null, label: "MAGIC", caption: "Became a magician, engaging live audiences at private events and on the street. This photo is from my gig at a black-tie boxing and ballet gala." },
@@ -401,11 +401,10 @@ export default function MyStory() {
   const progressW = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   return (
-    <>
+    <div id="my-story" style={{ scrollMarginTop: "56px" }}>
       {/* ── Desktop: sticky horizontal scroll ──────────────────────────── */}
       <section
         ref={containerRef}
-        id="my-story"
         className="hidden md:block"
         style={{ height: `${n * 100}vh`, position: "relative" }}
       >
@@ -459,7 +458,7 @@ export default function MyStory() {
       </section>
 
       {/* ── Mobile: chapters stacked vertically ────────────────────────── */}
-      <section id="my-story" className="block md:hidden" style={{ background: "#F2EBD9" }}>
+      <section className="block md:hidden" style={{ background: "#F2EBD9" }}>
         <div style={{ padding: "12px 24px 4px" }}>
           <span className="font-mono" style={{ fontSize: "11px", letterSpacing: "0.3em", color: "#1C1A14", opacity: 0.2 }}>
             MY STORY
@@ -514,6 +513,6 @@ export default function MyStory() {
           </div>
         ))}
       </section>
-    </>
+    </div>
   );
 }

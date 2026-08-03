@@ -19,7 +19,7 @@ const CONTACT_LINKS = [
    pointer-events:none makes the iframe non-interactive so clicks hit the
    outer button. A "CLICK TO VIEW" badge floats at the bottom.
    ──────────────────────────────────────────────────────────────────────── */
-function ResumeThumbnail({ onClick, containerRef }: { onClick: () => void; containerRef: React.RefObject<HTMLDivElement | null> }) {
+function ResumeThumbnail({ onClick, containerRef, isMobile }: { onClick: () => void; containerRef: React.RefObject<HTMLDivElement | null>; isMobile: boolean }) {
   const [hovered, setHovered] = useState(false);
   const [containerWidth, setContainerWidth] = useState(260);
 
@@ -39,6 +39,42 @@ function ResumeThumbnail({ onClick, containerRef }: { onClick: () => void; conta
   const PDF_H = 1056;
   const scale = containerWidth / PDF_W;
   const scaledH = PDF_H * scale;
+
+  /* Mobile: iframe-embedded PDFs render unreliably (esp. iOS Safari — a small
+     top-left render on an otherwise blank box). Show a styled card instead;
+     tapping still opens the real PDF via onClick (handleOpen -> window.open). */
+  if (isMobile) {
+    return (
+      <div
+        onClick={onClick}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => e.key === "Enter" && onClick()}
+        aria-label="View resume"
+        style={{
+          width: "100%",
+          aspectRatio: "8.5 / 11",
+          background: "#FBF7EE",
+          border: "1px solid rgba(196,154,60,0.45)",
+          position: "relative",
+          cursor: "pointer",
+        }}
+      >
+        <div className="absolute" style={{ inset: "10px", border: "1px solid rgba(196,154,60,0.18)", pointerEvents: "none" }} />
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+          <svg width="10" height="10">
+            <polygon points="5,0 10,5 5,10 0,5" fill="#C49A3C" />
+          </svg>
+          <span className="font-mono" style={{ fontSize: "12px", letterSpacing: "0.22em", color: "#1C1A14", opacity: 0.6 }}>
+            RESUME
+          </span>
+          <span className="font-mono" style={{ fontSize: "10px", letterSpacing: "0.14em", color: "#C49A3C" }}>
+            TAP TO VIEW PDF
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -177,7 +213,7 @@ export default function ResumeAndContact() {
         };
 
   return (
-    <div style={{ background: "#F2EBD9", padding: "80px 0 96px" }}>
+    <div style={{ background: "#F2EBD9", padding: "clamp(32px, 8vw, 80px) 0 clamp(48px, 10vw, 96px)" }}>
       <div style={{ maxWidth: "1152px", margin: "0 auto", padding: "0 56px" }}>
         <GoldRule />
       </div>
@@ -192,7 +228,7 @@ export default function ResumeAndContact() {
           style={{ gap: "clamp(48px, 6vw, 96px)", alignItems: "start" }}
         >
           {/* LEFT — Resume: flex column so thumbnail fills remaining height */}
-          <div id="resume" style={{ display: "flex", flexDirection: "column" }}>
+          <div id="resume" style={{ display: "flex", flexDirection: "column", scrollMarginTop: "56px" }}>
             <motion.p
               {...anim(0)}
               className="font-mono"
@@ -207,7 +243,7 @@ export default function ResumeAndContact() {
               ref={thumbnailContainerRef}
               style={{ width: "100%" }}
             >
-              <ResumeThumbnail onClick={handleOpen} containerRef={thumbnailContainerRef} />
+              <ResumeThumbnail onClick={handleOpen} containerRef={thumbnailContainerRef} isMobile={isMobile} />
             </motion.div>
 
             <motion.a
@@ -231,7 +267,7 @@ export default function ResumeAndContact() {
           </div>
 
           {/* RIGHT — Contact */}
-          <div id="contact" style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", paddingTop: "4px" }}>
+          <div id="contact" style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", paddingTop: "4px", scrollMarginTop: "56px" }}>
             <motion.p
               {...anim(0.04)}
               className="font-mono"
@@ -275,6 +311,7 @@ export default function ResumeAndContact() {
                     href={link.href}
                     target={link.href.startsWith("mailto") ? undefined : "_blank"}
                     rel={link.href.startsWith("mailto") ? undefined : "noopener noreferrer"}
+                    aria-label={link.label === "Email" ? "Email Zach Lipkin" : "Zach Lipkin on LinkedIn"}
                     className="group flex items-center justify-between px-4 py-3 transition-all duration-200"
                     style={{
                       border: "1px solid rgba(196,154,60,0.3)",
@@ -293,8 +330,11 @@ export default function ResumeAndContact() {
                     <span className="font-mono" style={{ fontSize: "11px", letterSpacing: "0.12em", color: "#C49A3C" }}>
                       {link.label.toUpperCase()}
                     </span>
-                    <span className="text-sm" style={{ color: "#1C1A14", opacity: 0.6, fontFamily: "var(--font-dm-sans)" }}>
+                    <span className="hidden md:inline text-sm" style={{ color: "#1C1A14", opacity: 0.6, fontFamily: "var(--font-dm-sans)" }}>
                       {link.display}
+                    </span>
+                    <span className="md:hidden" style={{ color: "#C49A3C", opacity: 0.8, fontSize: "14px" }} aria-hidden>
+                      →
                     </span>
                   </a>
                 ))}
