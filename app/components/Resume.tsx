@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { motion, useInView, useReducedMotion, AnimatePresence } from "framer-motion";
 
 const RESUME_URL = "/Zach_Lipkin_Resume.pdf";
@@ -41,8 +42,11 @@ function ResumeThumbnail({ onClick, containerRef, isMobile }: { onClick: () => v
   const scaledH = PDF_H * scale;
 
   /* Mobile: iframe-embedded PDFs render unreliably (esp. iOS Safari — a small
-     top-left render on an otherwise blank box). Show a styled card instead;
-     tapping still opens the real PDF via onClick (handleOpen -> window.open). */
+     top-left render on an otherwise blank box). Show a pre-rendered image of the
+     resume's first page instead; tapping still opens the real PDF via onClick
+     (handleOpen -> window.open). NOTE: public/resume-thumb.png must be
+     regenerated (e.g. `sips -s format png public/Zach_Lipkin_Resume.pdf --out
+     public/resume-thumb.png`) whenever the resume PDF changes. */
   if (isMobile) {
     return (
       <div
@@ -54,22 +58,36 @@ function ResumeThumbnail({ onClick, containerRef, isMobile }: { onClick: () => v
         style={{
           width: "100%",
           aspectRatio: "8.5 / 11",
-          background: "#FBF7EE",
+          background: "#fff",
           border: "1px solid rgba(196,154,60,0.45)",
           position: "relative",
+          overflow: "hidden",
           cursor: "pointer",
         }}
       >
-        <div className="absolute" style={{ inset: "10px", border: "1px solid rgba(196,154,60,0.18)", pointerEvents: "none" }} />
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-          <svg width="10" height="10">
-            <polygon points="5,0 10,5 5,10 0,5" fill="#C49A3C" />
-          </svg>
-          <span className="font-mono" style={{ fontSize: "12px", letterSpacing: "0.22em", color: "#1C1A14", opacity: 0.6 }}>
-            RESUME
-          </span>
-          <span className="font-mono" style={{ fontSize: "10px", letterSpacing: "0.14em", color: "#C49A3C" }}>
-            TAP TO VIEW PDF
+        <Image
+          src="/resume-thumb.png"
+          alt="Resume preview"
+          fill
+          style={{ objectFit: "cover", objectPosition: "top" }}
+          sizes="100vw"
+        />
+        <div
+          className="absolute bottom-0 left-0 right-0 flex items-center justify-center"
+          style={{ padding: "10px 0" }}
+        >
+          <span
+            className="font-mono"
+            style={{
+              fontSize: "10px",
+              letterSpacing: "0.18em",
+              color: "#1C1A14",
+              background: "rgba(242,235,217,0.95)",
+              border: "1px solid rgba(196,154,60,0.45)",
+              padding: "4px 12px",
+            }}
+          >
+            TAP TO VIEW
           </span>
         </div>
       </div>

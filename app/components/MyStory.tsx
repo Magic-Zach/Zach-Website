@@ -20,7 +20,7 @@ const CHAPTERS = [
       "I've always been drawn to the foundational, human-level things like health, energy, financial wellbeing, fun, etc. but I couldn't choose just one, because they all mattered and I didn't want to ignore any.",
       "Then I discovered what business was. Not just money and suits, but the way people and resources organize around a vision to make it real, driving change across all these areas and around the world.",
     ],
-    hero: { src: "/ch1-main.png" as string | null, label: "MICHIGAN — EARLY YEARS" },
+    hero: { src: "/ch1-main.png" as string | null, label: "MICHIGAN — EARLY YEARS", objectPosition: "center top" },
     notes: [
       { type: "image" as const, src: "/ch1-side1.jpg" as string | null, label: "SOCCER CHAMPIONSHIP", caption: "Played soccer growing up, finishing with a state championship my senior year of high school." },
       { type: "image" as const, src: "/ch1-side2.jpeg" as string | null, label: "MICHIGAN SUMMERS", caption: "The winters are harsh, but Michigan summers are unparalleled! This lake is my happy place." },
@@ -37,7 +37,7 @@ const CHAPTERS = [
       "Inspired by these grand visions, innovative technologies, and daring founders, I built a social media channel with 100k+ views breaking down the coolest startups, and landed a venture capital internship analyzing startup investments and talking directly with entrepreneurs.",
       "But I wanted to do more than analyze these ideas. I wanted to understand how they figure out what to do next, and grow into businesses that reshape entire spaces.",
     ],
-    hero: { src: "/ch2-main.jpeg" as string | null, label: "MICHIGAN ROSS — ANN ARBOR" },
+    hero: { src: "/ch2-main.jpeg" as string | null, label: "MICHIGAN ROSS — ANN ARBOR", objectPosition: "center top" },
     notes: [
       { type: "image" as const, src: "/ch2-side1.jpg" as string | null, label: "SKATE CLUB", caption: "Founded a skate club and scaled to 600+ members and $10k+ in funding." },
       { type: "image" as const, src: "/ch2-side2.png" as string | null, label: "STARTUP CONTENT", caption: "Built a social media channel breaking down early-stage innovation to ~100k views, now rebuilding it with AI-automated production." },
@@ -55,7 +55,7 @@ const CHAPTERS = [
       "For the past few years, I've helped Fortune 500 companies innovate and grow by understanding what people need, and figuring out how to meet those needs through unique brand, marketing, and product strategies.",
       "I've learned a ton about how businesses and their leaders think, make decisions, and grow, and I've been excited to apply these learnings alongside AI, using new tools and finding new ways to create impact for clients.",
     ],
-    hero: { src: "/ch3-main.jpg" as string | null, label: "PROPHET — NEW YORK CITY" },
+    hero: { src: "/ch3-main.jpg" as string | null, label: "PROPHET — NEW YORK CITY", objectPosition: "center 35%" },
     notes: [
       { type: "image" as const, src: "/ch3-side1.jpeg" as string | null, label: "NYC EXPLORATION", caption: "Always meeting new people and trying new things, from a data science thesis competition to a sword dancing festival and an origami convention." },
       { type: "image" as const, src: "/ch3-side2.jpeg" as string | null, label: "MAGIC", caption: "Became a magician, engaging live audiences at private events and on the street. This photo is from my gig at a black-tie boxing and ballet gala." },
@@ -170,6 +170,63 @@ function NoteCard({
   return <FlipImageCard src={note.src} label={note.label} caption={note.caption} accent={accent} />;
 }
 
+/* ── Sunburst halo — miniature echo of the hero's radiating background,
+   used behind the active chapter numeral in the tracker ─────────────────── */
+function SunburstMark({
+  bloom,
+  innerRadius = 8.5,
+  radiusXInner,
+  radiusYInner,
+  radiusXOuter,
+  radiusYOuter,
+}: {
+  bloom: boolean;
+  innerRadius?: number;
+  radiusXInner?: number;
+  radiusYInner?: number;
+  radiusXOuter?: number;
+  radiusYOuter?: number;
+}) {
+  const cx = 16;
+  const cy = 17;
+  const numRays = 12;
+  const rays = Array.from({ length: numRays }, (_, i) => (i * 360) / numRays);
+  const rxInner = radiusXInner ?? innerRadius;
+  const ryInner = radiusYInner ?? innerRadius;
+  const rxOuter = radiusXOuter ?? 15.5;
+  const ryOuter = radiusYOuter ?? 15.5;
+
+  return (
+    <motion.svg
+      width="34"
+      height="34"
+      viewBox="0 0 34 34"
+      aria-hidden
+      style={{ position: "absolute", left: 0, top: "-6px", zIndex: 0, pointerEvents: "none" }}
+      initial={bloom ? { opacity: 0, scale: 0.7 } : false}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
+    >
+      {rays.map((angle, i) => {
+        const rad = (angle * Math.PI) / 180;
+        const x1 = +(cx + rxInner * Math.cos(rad)).toFixed(1);
+        const y1 = +(cy + ryInner * Math.sin(rad)).toFixed(1);
+        const x2 = +(cx + rxOuter * Math.cos(rad)).toFixed(1);
+        const y2 = +(cy + ryOuter * Math.sin(rad)).toFixed(1);
+        return (
+          <line
+            key={angle}
+            x1={x1} y1={y1} x2={x2} y2={y2}
+            stroke="#C49A3C"
+            strokeWidth="1.3"
+            opacity={i % 2 === 0 ? 0.9 : 0.55}
+          />
+        );
+      })}
+    </motion.svg>
+  );
+}
+
 /* ── Single chapter panel (100vw × 100vh) ────────────────────────────────── */
 function ChapterPanel({
   chapter,
@@ -182,6 +239,7 @@ function ChapterPanel({
 }) {
   const n = CHAPTERS.length;
   const isLast = index === n - 1;
+  const prefersReducedMotion = useReducedMotion();
 
   /* Fade thresholds — last chapter special-cased:
      stays at full opacity always (no fade-in ramp, no fade-out). */
@@ -265,34 +323,60 @@ function ChapterPanel({
           style={{ opacity, y: yText }}
           className="flex flex-col justify-center gap-4 min-h-0 py-2"
         >
-          {/* Chapter tracker — CHAPTER label + all three numerals, active one underlined in gold */}
-          <div className="flex items-baseline gap-3">
+          {/* Chapter tracker — CHAPTER label + all three numerals; the active one is
+              haloed by a small gold sunburst, echoing the hero's radiating background */}
+          <div className="flex items-center gap-3">
             <span className="font-mono" style={{ fontSize: "10px", letterSpacing: "0.24em", color: "#1C1A14", opacity: 0.4 }}>
               CHAPTER
             </span>
-            <div className="flex items-baseline" style={{ gap: "8px" }}>
+            <div className="flex items-center" style={{ gap: "2px" }}>
               {CHAPTERS.map((c, i) => {
                 const active = i === index;
                 return (
-                  <span key={c.id} className="flex items-baseline" style={{ gap: "8px" }}>
+                  <span key={c.id} className="flex items-center">
                     {i > 0 && (
-                      <span className="font-mono" style={{ fontSize: "10px", color: "#1C1A14", opacity: 0.2 }}>
-                        ·
-                      </span>
+                      <svg width="5" height="5" style={{ margin: "0 5px", flexShrink: 0 }} aria-hidden>
+                        <polygon points="2.5,0 5,2.5 2.5,5 0,2.5" fill="#1C1A14" opacity="0.4" />
+                      </svg>
                     )}
+                    {/* Fixed-size slot so the row never reflows as the active chapter changes */}
                     <span
-                      className="font-mono"
-                      style={{
-                        fontSize: "10px",
-                        letterSpacing: "0.18em",
-                        paddingBottom: "3px",
-                        borderBottom: active ? `2px solid ${chapter.accent}` : "2px solid transparent",
-                        color: active ? chapter.accent : "#1C1A14",
-                        opacity: active ? 1 : 0.25,
-                        transition: "color 0.3s ease, border-color 0.3s ease",
-                      }}
+                      className="flex items-center justify-center"
+                      style={{ position: "relative", width: "34px", height: "22px" }}
                     >
-                      {c.number}
+                      {active && !prefersReducedMotion && (
+                        <SunburstMark
+                          bloom
+                          radiusXInner={index === 2 ? 11 : undefined}
+                          radiusYInner={index === 2 ? 7 : undefined}
+                          radiusXOuter={index === 2 ? 16.5 : undefined}
+                          radiusYOuter={index === 2 ? 15.5 : undefined}
+                        />
+                      )}
+                      {active && prefersReducedMotion && (
+                        <SunburstMark
+                          bloom={false}
+                          radiusXInner={index === 2 ? 11 : undefined}
+                          radiusYInner={index === 2 ? 7 : undefined}
+                          radiusXOuter={index === 2 ? 16.5 : undefined}
+                          radiusYOuter={index === 2 ? 15.5 : undefined}
+                        />
+                      )}
+                      <span
+                        className="font-mono"
+                        style={{
+                          position: "relative",
+                          zIndex: 1,
+                          fontSize: "10px",
+                          letterSpacing: "0.18em",
+                          fontWeight: 600,
+                          color: active ? chapter.accent : "#1C1A14",
+                          opacity: active ? 1 : 0.25,
+                          transition: "color 0.3s ease",
+                        }}
+                      >
+                        {c.number}
+                      </span>
                     </span>
                   </span>
                 );
@@ -480,7 +564,7 @@ export default function MyStory() {
               style={{ border: "1px solid rgba(196,154,60,0.3)", background: "#FBF7EE", height: "220px", position: "relative", overflow: "hidden", marginBottom: "24px" }}
             >
               {chapter.hero.src ? (
-                <Image src={chapter.hero.src} alt={chapter.hero.label} fill style={{ objectFit: "cover", objectPosition: "center top" }} sizes="100vw" />
+                <Image src={chapter.hero.src} alt={chapter.hero.label} fill style={{ objectFit: "cover", objectPosition: chapter.hero.objectPosition }} sizes="100vw" />
               ) : (
                 <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <span className="font-mono" style={{ fontSize: "8px", letterSpacing: "0.12em", color: "#C49A3C", opacity: 0.4 }}>{chapter.hero.label}</span>
