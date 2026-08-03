@@ -23,7 +23,7 @@ const CHAPTERS = [
     hero: { src: "/ch1-main.png" as string | null, label: "MICHIGAN — EARLY YEARS" },
     notes: [
       { type: "image" as const, src: "/ch1-side1.jpg" as string | null, label: "SOCCER CHAMPIONSHIP", caption: "Played soccer growing up, finishing with a state championship my senior year of high school." },
-      { type: "image" as const, src: "/ch1-side2.jpeg" as string | null, label: "MICHIGAN SUMMERS", caption: "Grew up near a lake, swimming and playing outside every chance I got." },
+      { type: "image" as const, src: "/ch1-side2.jpeg" as string | null, label: "MICHIGAN SUMMERS", caption: "The winters are harsh, but Michigan summers are unparalleled! This lake is my happy place." },
     ],
   },
   {
@@ -40,8 +40,8 @@ const CHAPTERS = [
     hero: { src: "/ch2-main.jpeg" as string | null, label: "MICHIGAN ROSS — ANN ARBOR" },
     notes: [
       { type: "image" as const, src: "/ch2-side1.jpg" as string | null, label: "SKATE CLUB", caption: "Founded a skate club and scaled to 600+ members and $10k+ in funding." },
-      { type: "image" as const, src: "/ch2-side2.jpg" as string | null, label: "VISIONOVA", caption: "Built a social media channel breaking down early-stage innovation to ~100k views, now rebuilding it with AI-automated production." },
-      { type: "image" as const, src: "/ch2-side3.jpg" as string | null, label: "IMPULSUM VENTURES", caption: "Interned as a VC analyst, building a 150+ startup deal-flow database, running diligence and founder meetings, and authoring LP memos on successful investments." },
+      { type: "image" as const, src: "/ch2-side2.png" as string | null, label: "STARTUP CONTENT", caption: "Built a social media channel breaking down early-stage innovation to ~100k views, now rebuilding it with AI-automated production." },
+      { type: "image" as const, src: "/ch2-side3.jpg" as string | null, label: "VENTURE INTERNSHIP", caption: "Interned as a VC analyst, building a 150+ startup deal-flow database, running diligence and founder meetings, and authoring LP memos on successful investments." },
     ],
   },
   {
@@ -55,7 +55,7 @@ const CHAPTERS = [
       "For the past few years, I've helped Fortune 500 companies innovate and grow by understanding what people need, and figuring out how to meet those needs through unique brand, marketing, and product strategies.",
       "I've learned a ton about how businesses and their leaders think, make decisions, and grow, and I've been excited to apply these learnings alongside AI, using new tools and finding new ways to create impact for clients.",
     ],
-    hero: { src: "/ch3-main.jpg" as string | null, label: "PROPHET — NEW YORK CITY" },
+    hero: { src: "/ch3-main.JPG" as string | null, label: "PROPHET — NEW YORK CITY" },
     notes: [
       { type: "image" as const, src: "/ch3-side1.jpeg" as string | null, label: "NYC EXPLORATION", caption: "Always meeting new people and trying new things, from a data science thesis competition to a sword dancing festival and an origami convention." },
       { type: "image" as const, src: "/ch3-side2.jpeg" as string | null, label: "MAGIC", caption: "Became a magician, engaging live audiences at private events and on the street. This photo is from my gig at a black-tie boxing and ballet gala." },
@@ -226,7 +226,7 @@ function ChapterPanel({
         style={{
           gridTemplateColumns: "1fr 1fr",
           gap: "clamp(24px, 3vw, 56px)",
-          padding: "0 56px 24px",
+          padding: "83px 56px 44px",
         }}
       >
         {/* LEFT — hero image: fixed 3:4 portrait aspect ratio, consistent across chapters */}
@@ -262,39 +262,39 @@ function ChapterPanel({
 
         {/* RIGHT — text + notes */}
         <motion.div
-          style={{ opacity, y: yText, position: "relative" }}
+          style={{ opacity, y: yText }}
           className="flex flex-col justify-center gap-4 min-h-0 py-2"
         >
-          {/* Chapter tracker — sits in the whitespace above the title, top-aligned with the hero image */}
-          <div className="absolute flex items-center gap-3" style={{ top: 0, left: 0 }}>
-            <span className="font-mono" style={{ fontSize: "10px", letterSpacing: "0.24em", color: "#1C1A14", opacity: 0.35 }}>
+          {/* Chapter tracker — CHAPTER label + all three numerals, active one underlined in gold */}
+          <div className="flex items-baseline gap-3">
+            <span className="font-mono" style={{ fontSize: "10px", letterSpacing: "0.24em", color: "#1C1A14", opacity: 0.4 }}>
               CHAPTER
             </span>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-baseline" style={{ gap: "8px" }}>
               {CHAPTERS.map((c, i) => {
                 const active = i === index;
                 return (
-                  <div
-                    key={c.id}
-                    className="font-mono flex items-center justify-center"
-                    style={active
-                      ? {
-                          width: "16px",
-                          height: "16px",
-                          fontSize: "9px",
-                          color: "#F2EBD9",
-                          background: chapter.accent,
-                        }
-                      : {
-                          width: "6px",
-                          height: "6px",
-                          background: "#1C1A14",
-                          opacity: 0.18,
-                        }
-                    }
-                  >
-                    {active ? c.number : null}
-                  </div>
+                  <span key={c.id} className="flex items-baseline" style={{ gap: "8px" }}>
+                    {i > 0 && (
+                      <span className="font-mono" style={{ fontSize: "10px", color: "#1C1A14", opacity: 0.2 }}>
+                        ·
+                      </span>
+                    )}
+                    <span
+                      className="font-mono"
+                      style={{
+                        fontSize: "10px",
+                        letterSpacing: "0.18em",
+                        paddingBottom: "3px",
+                        borderBottom: active ? `2px solid ${chapter.accent}` : "2px solid transparent",
+                        color: active ? chapter.accent : "#1C1A14",
+                        opacity: active ? 1 : 0.25,
+                        transition: "color 0.3s ease, border-color 0.3s ease",
+                      }}
+                    >
+                      {c.number}
+                    </span>
+                  </span>
                 );
               })}
             </div>
@@ -370,20 +370,29 @@ export default function MyStory() {
      chapter. Each transition is wide (spans most of the segment) and eased so it
      accelerates/decelerates instead of snapping abruptly, with only a brief dwell
      right at the read-point of each chapter. */
-  const segment = 1 / n;
-  const rampHalf = segment * 0.38;
-  const easeFractions = [0, 0.15, 0.5, 0.85, 1]; // smoothstep-like ease-in-out
+  const easeFractions = [0, 0.22, 0.5, 0.78, 1]; // gentle ease-in-out, close to linear
+
+  /* Per-transition scroll ranges [start, end], hand-tuned by feel rather than derived
+     from a uniform ramp, so each chapter's dwell can be adjusted independently:
+     - ch I holds only until 0.12, so the track responds soon after you start scrolling
+     - ch II gets a real dwell (0.42 → 0.51) so it visibly settles
+     - the second transition and the final hold are left exactly as they were
+     NOTE: hand-tuned for 3 chapters — extend this array if CHAPTERS grows. */
+  const TRANSITIONS: ReadonlyArray<readonly [number, number]> = [
+    [0.12, 0.42],
+    [0.51, 0.8233],
+  ];
+
   const xTimes: number[] = [0];
   const xValues: string[] = ["0vw"];
-  for (let k = 1; k < n; k++) {
-    const center = k * segment;
-    const from = -(k - 1) * 100;
-    const to = -k * 100;
+  TRANSITIONS.forEach(([start, end], i) => {
+    const from = -i * 100;
+    const to = -(i + 1) * 100;
     for (const f of easeFractions) {
-      xTimes.push(center - rampHalf + f * (2 * rampHalf));
+      xTimes.push(start + f * (end - start));
       xValues.push(`${from + f * (to - from)}vw`);
     }
-  }
+  });
   xTimes.push(1);
   xValues.push(`${-(n - 1) * 100}vw`);
   const x = useTransform(scrollYProgress, xTimes, xValues);
