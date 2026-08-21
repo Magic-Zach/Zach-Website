@@ -19,11 +19,11 @@ function FlipImageCard({ src, label, caption, accent, objectPosition = "center" 
 
   return (
     <div className="flex flex-col gap-2 md:grow md:shrink md:basis-[130px] md:min-w-[110px] md:max-w-[190px]">
-      {/* Card — fixed 4:3 aspect ratio for all side notes */}
+      {/* Card — square on mobile (more room for long captions), 4:3 on desktop */}
       <div
         onClick={() => setFlipped((v) => !v)}
+        className="aspect-square md:aspect-[4/3]"
         style={{
-          aspectRatio: "4/3",
           position: "relative",
           cursor: "pointer",
           overflow: "hidden",
@@ -53,21 +53,21 @@ function FlipImageCard({ src, label, caption, accent, objectPosition = "center" 
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
+              className="p-[10px] md:p-[14px]"
               style={{
                 position: "absolute",
                 inset: 0,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                padding: "14px",
                 zIndex: 2,
                 background: "rgba(20,18,12,0.55)",
               }}
             >
               <p
+                className="leading-[1.4] md:leading-[1.5]"
                 style={{
                   fontSize: "clamp(12px, 1vw, 14px)",
-                  lineHeight: 1.5,
                   color: "#F2EBD9",
                   textAlign: "center",
                   fontFamily: "var(--font-dm-sans)",
@@ -540,7 +540,7 @@ export default function MyStory() {
             style={{ zIndex: 20, height: "83px", padding: "0 56px", gap: "16px" }}
           >
             <div className="flex items-baseline" style={{ gap: "6px" }}>
-              <span className="font-mono" style={{ fontSize: "12px", letterSpacing: "0.32em", color: "#1C1A14", opacity: 0.55, fontWeight: 500, whiteSpace: "nowrap" }}>
+              <span className="font-mono" style={{ fontSize: "12px", letterSpacing: "0.32em", color: "#C49A3C", opacity: 0.9, fontWeight: 500, WebkitTextStroke: "0.4px #C49A3C", whiteSpace: "nowrap" }}>
                 MY STORY:
               </span>
               <p
@@ -592,7 +592,7 @@ export default function MyStory() {
       {/* ── Mobile: chapters stacked vertically ────────────────────────── */}
       <section className="block md:hidden" style={{ background: "#F2EBD9" }}>
         <div style={{ padding: "12px 24px 4px" }}>
-          <span className="font-mono" style={{ fontSize: "11px", letterSpacing: "0.3em", color: "#1C1A14", opacity: 0.55, fontWeight: 500 }}>
+          <span className="font-mono" style={{ fontSize: "11px", letterSpacing: "0.3em", color: "#C49A3C", opacity: 0.9, fontWeight: 500, WebkitTextStroke: "0.4px #C49A3C" }}>
             MY STORY:
           </span>
           <p

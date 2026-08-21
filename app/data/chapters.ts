@@ -36,7 +36,7 @@ export const CHAPTERS = [
     notes: [
       { type: "image" as const, src: "/ch2-side1.jpg" as string | null, label: "SKATE CLUB", caption: "Founded a skate club and scaled to 600+ members and $10k+ in funding.", objectPosition: undefined as string | undefined },
       { type: "image" as const, src: "/ch2-side2.png" as string | null, label: "STARTUP CONTENT", caption: "Built a social media channel breaking down early-stage innovation to ~100k views, now rebuilding it with AI-automated production.", objectPosition: undefined as string | undefined },
-      { type: "image" as const, src: "/ch2-side3.jpg" as string | null, label: "VENTURE INTERNSHIP", caption: "Interned as a VC analyst, building a 150+ startup deal-flow database, running diligence and founder meetings, and authoring LP memos on successful investments.", objectPosition: undefined as string | undefined },
+      { type: "image" as const, src: "/ch2-side3.jpg" as string | null, label: "VENTURE INTERNSHIP", caption: "Built a 150+ startup deal-flow database, running diligence and founder meetings, and authoring LP memos on successful investments.", objectPosition: undefined as string | undefined },
     ],
   },
   {
@@ -52,8 +52,8 @@ export const CHAPTERS = [
     ],
     hero: { src: "/ch3-main.jpg" as string | null, label: "PROPHET — NEW YORK CITY", objectPosition: "center 35%" },
     notes: [
-      { type: "image" as const, src: "/ch3-side1.jpeg" as string | null, label: "NYC EXPLORATION", caption: "Always meeting new people and trying new things, from a data science thesis competition to a sword dancing festival and an origami convention.", objectPosition: undefined as string | undefined },
-      { type: "image" as const, src: "/ch3-side2.jpeg" as string | null, label: "MAGIC", caption: "Became a magician, engaging live audiences at private events and on the street. This photo is from my gig at a black-tie boxing and ballet gala.", objectPosition: undefined as string | undefined },
+      { type: "image" as const, src: "/ch3-side1.jpeg" as string | null, label: "NYC EXPLORATION", caption: "Always meeting new people and trying new things: data science thesis competition, sword dancing festival, origami convention, etc.", objectPosition: undefined as string | undefined },
+      { type: "image" as const, src: "/ch3-side2.jpeg" as string | null, label: "MAGIC", caption: "Magician, engaging audiences at private events and on the street. Photo is from my gig at a black-tie boxing and ballet gala.", objectPosition: undefined as string | undefined },
       { type: "image" as const, src: "/ch3-side3.jpg" as string | null, label: "ART", caption: "Produced a photography project exploring the tension between corporate and personal identity.", objectPosition: undefined as string | undefined },
     ],
   },
