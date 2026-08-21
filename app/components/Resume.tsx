@@ -59,7 +59,8 @@ function ResumeThumbnail({ onClick, containerRef, isMobile }: { onClick: () => v
           width: "100%",
           aspectRatio: "8.5 / 11",
           background: "#fff",
-          border: "1px solid rgba(196,154,60,0.45)",
+          border: "1px solid rgba(150,112,32,0.75)",
+          boxShadow: "0 4px 18px rgba(150,112,32,0.18)",
           position: "relative",
           overflow: "hidden",
           cursor: "pointer",
@@ -72,6 +73,9 @@ function ResumeThumbnail({ onClick, containerRef, isMobile }: { onClick: () => v
           style={{ objectFit: "cover", objectPosition: "top" }}
           sizes="100vw"
         />
+        <div style={{ position: "absolute", inset: 0, zIndex: 3, pointerEvents: "none" }}>
+          <CornerMarks />
+        </div>
         <div
           className="absolute bottom-0 left-0 right-0 flex items-center justify-center"
           style={{ padding: "10px 0" }}
@@ -107,35 +111,33 @@ function ResumeThumbnail({ onClick, containerRef, isMobile }: { onClick: () => v
         width: "100%",
         height: `${scaledH}px`,
         background: "#fff",
-        border: `1px solid rgba(196,154,60,${hovered ? 0.7 : 0.45})`,
+        border: "1px solid rgba(150,112,32,0.75)",
         position: "relative",
         boxShadow: hovered
-          ? "6px 10px 32px rgba(28,26,20,0.2)"
-          : "4px 6px 24px rgba(28,26,20,0.14)",
+          ? "0 8px 26px rgba(150,112,32,0.26)"
+          : "0 4px 18px rgba(150,112,32,0.18)",
         overflow: "hidden",
         cursor: "pointer",
         transform: hovered ? "translateY(-4px)" : "translateY(0)",
-        transition: "box-shadow 0.22s ease, border-color 0.22s ease, transform 0.22s ease",
+        transition: "transform 0.22s ease, box-shadow 0.22s ease",
       }}
     >
-      {/* Scaled-down real PDF — pointer-events off so clicks pass through.
-          #toolbar=0&navpanes=0 hides the viewer chrome in Chrome/Edge. */}
-      <iframe
-        src={`${RESUME_URL}#toolbar=0&navpanes=0`}
-        title="Resume preview"
-        style={{
-          width: `${PDF_W}px`,
-          height: `${PDF_H}px`,
-          border: "none",
-          display: "block",
-          transform: `scale(${scale})`,
-          transformOrigin: "top left",
-          pointerEvents: "none",
-          userSelect: "none",
-        }}
-        tabIndex={-1}
-        aria-hidden
+      {/* Pre-rendered first page, not a live PDF iframe — the browser's built-in
+          PDF viewer draws its own drop-shadow page chrome inside the iframe
+          document that no CSS on our side can reach, which at this scale-down
+          reads as a heavy black border around the whole box. A static image
+          (same asset the mobile branch already uses) avoids that entirely. */}
+      <Image
+        src="/resume-thumb.png"
+        alt="Resume preview"
+        fill
+        style={{ objectFit: "cover", objectPosition: "top" }}
+        sizes="(min-width: 768px) 40vw, 100vw"
       />
+
+      <div style={{ position: "absolute", inset: 0, zIndex: 3, pointerEvents: "none" }}>
+        <CornerMarks />
+      </div>
 
       {/* "CLICK TO VIEW" badge */}
       <div
@@ -319,7 +321,7 @@ export default function ResumeAndContact() {
                 className="text-sm leading-relaxed mb-8"
                 style={{ color: "#1C1A14", opacity: 0.65, fontFamily: "var(--font-dm-sans)" }}
               >
-                Have any questions, feedback, or just want to chat? I&apos;d love to hear from you!
+                Always up for a conversation about startups, innovation, or whatever else you're passionate about.
               </motion.p>
 
               <motion.div {...anim(0.26)} className="flex flex-col gap-3">

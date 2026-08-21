@@ -1,71 +1,21 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform, useReducedMotion, AnimatePresence } from "framer-motion";
-
-/* ── Chapter content data ────────────────────────────────────────────────── */
-/* heroSrc / noteSrc fields: replace null with the imported image path once
-   you have photos. The placeholder labels show what image belongs there.    */
-
-const CHAPTERS = [
-  {
-    id: "growing-up",
-    number: "I",
-    label: "GROWING UP",
-    accent: "#c49a3cff",
-    title: "Growing Up Curious",
-    paragraphs: [
-      "I grew up in a pretty suburb of Detroit, Michigan, in a family of doctors. Seeing that my parents saved lives… I wanted to have a meaningful impact too.",
-      "I've always been drawn to the foundational, human-level things like health, energy, financial wellbeing, fun, etc. but I couldn't choose just one, because they all mattered and I didn't want to ignore any.",
-      "Then I discovered what business was. Not just money and suits, but the way people and resources organize around a vision to make it real, driving change across all these areas and around the world.",
-    ],
-    hero: { src: "/ch1-main.png" as string | null, label: "MICHIGAN — EARLY YEARS", objectPosition: "center top" },
-    notes: [
-      { type: "image" as const, src: "/ch1-side1.jpg" as string | null, label: "SOCCER CHAMPIONSHIP", caption: "Played soccer growing up, finishing with a state championship my senior year of high school." },
-      { type: "image" as const, src: "/ch1-side2.jpeg" as string | null, label: "MICHIGAN SUMMERS", caption: "The winters are harsh, but Michigan summers are unparalleled! This lake is my happy place." },
-    ],
-  },
-  {
-    id: "michigan",
-    number: "II",
-    label: "MICHIGAN",
-    accent: "#c49a3cff",
-    title: "Studying Business and Big Ideas",
-    paragraphs: [
-      "I went on to study business (and psychology) at the University of Michigan's Ross School of Business. I loved learning the fundamentals, and quickly became fascinated by how startups were applying them in creative ways to reimagine what's possible, from computing with human DNA to solving nuclear fusion and teaching machines to reason for themselves.",
-      "Inspired by these grand visions, innovative technologies, and daring founders, I built a social media channel with 100k+ views breaking down the coolest startups, and landed a venture capital internship analyzing startup investments and talking directly with entrepreneurs.",
-      "But I wanted to do more than analyze these ideas. I wanted to understand how they figure out what to do next, and grow into businesses that reshape entire spaces.",
-    ],
-    hero: { src: "/ch2-main.jpeg" as string | null, label: "MICHIGAN ROSS — ANN ARBOR", objectPosition: "center top" },
-    notes: [
-      { type: "image" as const, src: "/ch2-side1.jpg" as string | null, label: "SKATE CLUB", caption: "Founded a skate club and scaled to 600+ members and $10k+ in funding." },
-      { type: "image" as const, src: "/ch2-side2.png" as string | null, label: "STARTUP CONTENT", caption: "Built a social media channel breaking down early-stage innovation to ~100k views, now rebuilding it with AI-automated production." },
-      { type: "image" as const, src: "/ch2-side3.jpg" as string | null, label: "VENTURE INTERNSHIP", caption: "Interned as a VC analyst, building a 150+ startup deal-flow database, running diligence and founder meetings, and authoring LP memos on successful investments." },
-    ],
-  },
-  {
-    id: "building",
-    number: "III",
-    label: "NOW",
-    accent: "#c49a3cff",
-    title: "Driving Business Growth and Impact",
-    paragraphs: [
-      "I moved to New York and became a business growth strategy consultant at Prophet, helping companies grow revenue (as opposed to cutting costs) across markets and geographies, everything from peanuts and biopharma in America to wealth management in Germany.",
-      "For the past few years, I've helped Fortune 500 companies innovate and grow by understanding what people need, and figuring out how to meet those needs through unique brand, marketing, and product strategies.",
-      "I've learned a ton about how businesses and their leaders think, make decisions, and grow, and I've been excited to apply these learnings alongside AI, using new tools and finding new ways to create impact for clients.",
-    ],
-    hero: { src: "/ch3-main.jpg" as string | null, label: "PROPHET — NEW YORK CITY", objectPosition: "center 35%" },
-    notes: [
-      { type: "image" as const, src: "/ch3-side1.jpeg" as string | null, label: "NYC EXPLORATION", caption: "Always meeting new people and trying new things, from a data science thesis competition to a sword dancing festival and an origami convention." },
-      { type: "image" as const, src: "/ch3-side2.jpeg" as string | null, label: "MAGIC", caption: "Became a magician, engaging live audiences at private events and on the street. This photo is from my gig at a black-tie boxing and ballet gala." },
-    ],
-  },
-] as const;
+import { motion, useScroll, useTransform, useSpring, useReducedMotion, AnimatePresence } from "framer-motion";
+import { CHAPTERS, TRANSITIONS } from "../data/chapters";
 
 /* ── Flip-reveal image note card ─────────────────────────────────────────── */
-function FlipImageCard({ src, label, caption, accent }: { src: string | null; label: string; caption: string; accent: string }) {
+function FlipImageCard({ src, label, caption, accent, objectPosition = "center" }: { src: string | null; label: string; caption: string; accent: string; objectPosition?: string }) {
   const [flipped, setFlipped] = useState(false);
+
+  /* Auto-revert to the un-blurred image after a few seconds so the caption
+     doesn't stay covering the photo indefinitely. */
+  useEffect(() => {
+    if (!flipped) return;
+    const timer = setTimeout(() => setFlipped(false), 6000);
+    return () => clearTimeout(timer);
+  }, [flipped]);
 
   return (
     <div className="flex flex-col gap-2" style={{ flex: "1 1 130px", minWidth: "110px", maxWidth: "190px" }}>
@@ -86,7 +36,7 @@ function FlipImageCard({ src, label, caption, accent }: { src: string | null; la
             src={src}
             alt={label}
             fill
-            style={{ objectFit: "cover", transition: "filter 0.45s ease", filter: flipped ? "blur(5px) brightness(0.38)" : "none" }}
+            style={{ objectFit: "cover", objectPosition, transition: "filter 0.45s ease", filter: flipped ? "blur(5px) brightness(0.38)" : "none" }}
             sizes="200px"
           />
         ) : (
@@ -167,7 +117,15 @@ function NoteCard({
   note: (typeof CHAPTERS)[number]["notes"][number];
   accent: string;
 }) {
-  return <FlipImageCard src={note.src} label={note.label} caption={note.caption} accent={accent} />;
+  return (
+    <FlipImageCard
+      src={note.src}
+      label={note.label}
+      caption={note.caption}
+      accent={accent}
+      objectPosition={note.objectPosition}
+    />
+  );
 }
 
 /* ── Sunburst halo — miniature echo of the hero's radiating background,
@@ -439,6 +397,84 @@ function ChapterPanel({
   );
 }
 
+/* ── Mobile sticky chapter rail — signals "there are only three of these"
+   while the reader is inside the story section ──────────────────────────── */
+function MobileChapterRail() {
+  const [active, setActive] = useState(0);
+  const prefersReducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    const observers: IntersectionObserver[] = [];
+    CHAPTERS.forEach((chapter, i) => {
+      const el = document.getElementById(`ch-${chapter.id}`);
+      if (!el) return;
+      const obs = new IntersectionObserver(
+        ([entry]) => { if (entry.isIntersecting) setActive(i); },
+        { rootMargin: "-45% 0px -45% 0px" }
+      );
+      obs.observe(el);
+      observers.push(obs);
+    });
+    return () => observers.forEach((o) => o.disconnect());
+  }, []);
+
+  const goTo = (id: string) => {
+    document.getElementById(`ch-${id}`)?.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth" });
+  };
+
+  return (
+    <div
+      className="flex items-center gap-3"
+      style={{
+        position: "sticky",
+        top: "56px",
+        zIndex: 30,
+        background: "rgba(242,235,217,0.96)",
+        backdropFilter: "blur(10px)",
+        borderBottom: "1px solid rgba(196,154,60,0.4)",
+        padding: "10px 24px",
+      }}
+    >
+      <span className="font-mono" style={{ fontSize: "10px", letterSpacing: "0.2em", color: "#1C1A14", opacity: 0.4 }}>
+        CHAPTER
+      </span>
+      <div className="flex items-center" style={{ gap: "2px" }}>
+        {CHAPTERS.map((chapter, i) => {
+          const isActive = i === active;
+          return (
+            <span key={chapter.id} className="flex items-center">
+              {i > 0 && (
+                <svg width="5" height="5" style={{ margin: "0 6px", flexShrink: 0 }} aria-hidden>
+                  <polygon points="2.5,0 5,2.5 2.5,5 0,2.5" fill="#1C1A14" opacity="0.4" />
+                </svg>
+              )}
+              <button
+                onClick={() => goTo(chapter.id)}
+                className="font-mono"
+                style={{
+                  fontSize: "11px",
+                  letterSpacing: "0.18em",
+                  fontWeight: isActive ? 600 : 400,
+                  color: isActive ? chapter.accent : "#1C1A14",
+                  opacity: isActive ? 1 : 0.35,
+                  transition: "color 0.3s ease, opacity 0.3s ease",
+                  background: "none",
+                  border: "none",
+                  padding: "4px",
+                  cursor: "pointer",
+                }}
+                aria-label={`Go to Chapter ${chapter.number}: ${chapter.title}`}
+              >
+                {chapter.number}
+              </button>
+            </span>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 /* ── MyStory section ─────────────────────────────────────────────────────── */
 export default function MyStory() {
   const containerRef = useRef<HTMLElement>(null);
@@ -456,17 +492,8 @@ export default function MyStory() {
      right at the read-point of each chapter. */
   const easeFractions = [0, 0.22, 0.5, 0.78, 1]; // gentle ease-in-out, close to linear
 
-  /* Per-transition scroll ranges [start, end], hand-tuned by feel rather than derived
-     from a uniform ramp, so each chapter's dwell can be adjusted independently:
-     - ch I holds only until 0.12, so the track responds soon after you start scrolling
-     - ch II gets a real dwell (0.42 → 0.51) so it visibly settles
-     - the second transition and the final hold are left exactly as they were
-     NOTE: hand-tuned for 3 chapters — extend this array if CHAPTERS grows. */
-  const TRANSITIONS: ReadonlyArray<readonly [number, number]> = [
-    [0.12, 0.42],
-    [0.51, 0.8233],
-  ];
-
+  /* TRANSITIONS is imported from ../data/chapters so Nav's Story dropdown can
+     compute matching scroll targets via chapterProgress(). */
   const xTimes: number[] = [0];
   const xValues: string[] = ["0vw"];
   TRANSITIONS.forEach(([start, end], i) => {
@@ -479,7 +506,17 @@ export default function MyStory() {
   });
   xTimes.push(1);
   xValues.push(`${-(n - 1) * 100}vw`);
-  const x = useTransform(scrollYProgress, xTimes, xValues);
+
+  /* Smooth the track's driver so it trails slightly behind the wheel and glides
+     to catch up rather than snapping on every scroll tick — the raw
+     scrollYProgress is still used for the per-panel fades/progress bar below so
+     those stay in sync with actual scroll position. */
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 85,
+    damping: 20,
+    restDelta: 0.0005,
+  });
+  const x = useTransform(smoothProgress, xTimes, xValues);
 
   /* Progress bar */
   const progressW = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
@@ -489,19 +526,30 @@ export default function MyStory() {
       {/* ── Desktop: sticky horizontal scroll ──────────────────────────── */}
       <section
         ref={containerRef}
+        id="story-track"
         className="hidden md:block"
         style={{ height: `${n * 100}vh`, position: "relative" }}
       >
         <div style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden", background: "#F2EBD9" }}>
 
-          {/* MY STORY label — section header with accent divider */}
+          {/* MY STORY label — section header with accent divider + inline hook.
+              height:83px matches ChapterPanel's paddingTop (the space above the
+              hero image), so the row centers itself in that band exactly. */}
           <div
-            className="absolute top-0 left-0 right-0 flex items-center gap-4 pointer-events-none"
-            style={{ zIndex: 20, padding: "18px 56px 0" }}
+            className="absolute top-0 left-0 right-0 flex items-center pointer-events-none"
+            style={{ zIndex: 20, height: "83px", padding: "0 56px", gap: "16px" }}
           >
-            <span className="font-mono" style={{ fontSize: "12px", letterSpacing: "0.32em", color: "#1C1A14", opacity: 0.55 }}>
-              MY STORY
-            </span>
+            <div className="flex items-baseline" style={{ gap: "6px" }}>
+              <span className="font-mono" style={{ fontSize: "12px", letterSpacing: "0.32em", color: "#1C1A14", opacity: 0.55, fontWeight: 500, whiteSpace: "nowrap" }}>
+                MY STORY:
+              </span>
+              <p
+                className="font-mono"
+                style={{ fontSize: "14px", color: "#1C1A14", opacity: 0.55, whiteSpace: "nowrap" }}
+              >
+                How being curious about everything led to a career helping businesses grow.
+              </p>
+            </div>
             <div style={{ height: "1px", flex: 1, background: "rgba(196,154,60,0.4)" }} />
           </div>
 
@@ -544,14 +592,22 @@ export default function MyStory() {
       {/* ── Mobile: chapters stacked vertically ────────────────────────── */}
       <section className="block md:hidden" style={{ background: "#F2EBD9" }}>
         <div style={{ padding: "12px 24px 4px" }}>
-          <span className="font-mono" style={{ fontSize: "11px", letterSpacing: "0.3em", color: "#1C1A14", opacity: 0.2 }}>
-            MY STORY
+          <span className="font-mono" style={{ fontSize: "11px", letterSpacing: "0.3em", color: "#1C1A14", opacity: 0.55, fontWeight: 500 }}>
+            MY STORY:
           </span>
+          <p
+            className="font-mono"
+            style={{ fontSize: "14px", color: "#1C1A14", opacity: 0.55, marginTop: "4px" }}
+          >
+            I wanted to make a real impact but couldn&apos;t pick just one thing. Here&apos;s where that led.
+          </p>
         </div>
+        <MobileChapterRail />
         {CHAPTERS.map((chapter) => (
           <div
             key={chapter.id}
-            style={{ borderTop: `1px solid ${chapter.accent}33`, padding: "32px 24px 40px" }}
+            id={`ch-${chapter.id}`}
+            style={{ borderTop: `1px solid ${chapter.accent}33`, padding: "32px 24px 40px", scrollMarginTop: "104px" }}
           >
             <div className="flex items-center gap-3 mb-5">
               <span className="font-mono" style={{ fontSize: "11px", letterSpacing: "0.2em", color: chapter.accent }}>

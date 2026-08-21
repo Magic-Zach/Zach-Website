@@ -208,10 +208,14 @@ export default function Hero() {
     <section
       id="hero"
       className="relative overflow-hidden"
-      style={{ background: "#F2EBD9", paddingTop: "8vh", paddingBottom: "3vh" }}
+      style={{ background: "#F2EBD9", paddingTop: "8vh", paddingBottom: "5vh" }}
     >
-      {/* Art Deco / retro-futurist background */}
-      {!prefersReducedMotion && <ArtDecoBackground />}
+      {/* Art Deco / retro-futurist background — clipped to the same inset-4 frame
+          as the border below it, so the rays/circles stop exactly at the border
+          instead of bleeding past it to the section's outer edge. */}
+      <div className="absolute inset-4 overflow-hidden pointer-events-none" aria-hidden>
+        {!prefersReducedMotion && <ArtDecoBackground />}
+      </div>
 
       {/* ── Art Deco frame — equal inset on all sides ───────────────────── */}
       <div
@@ -265,6 +269,25 @@ export default function Hero() {
             />
           </motion.div>
         </div>
+
+        {/* One-liner — who I am / what I do, in plain terms. Matches the chapter
+            body paragraph treatment (MyStory.tsx) so it reads as the same voice. */}
+        <motion.p
+          style={{
+            marginTop: "10px",
+            paddingLeft: "6px",
+            fontFamily: "var(--font-dm-sans)",
+            fontSize: "clamp(15px, 1.35vw, 18px)",
+            lineHeight: 1.72,
+            color: "#1C1A14",
+            opacity: 0.76,
+          }}
+          initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
+          animate={{ opacity: 0.76, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        >
+          Curious about bold ideas, and determined to help them grow into real impact.
+        </motion.p>
 
       </div>
 

@@ -31,7 +31,16 @@
 /* ─── Base ───────────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+}
+html::-webkit-scrollbar { display: none; } /* WebKit */
+
+body {
+  scrollbar-width: none; /* Firefox */
+}
+body::-webkit-scrollbar { display: none; } /* WebKit */
 
 body {
   background: #F2EBD9;
@@ -66,11 +75,6 @@ body {
 }
 .gold-rule::before { opacity: 0.6; }
 .gold-rule::after  { opacity: 0.6; }
-
-/* Scrollbar */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #F2EBD9; }
-::-webkit-scrollbar-thumb { background: #C49A3C; opacity: 0.4; }
 
 /* Focus */
 :focus-visible { outline: 1px solid #C49A3C; outline-offset: 3px; }

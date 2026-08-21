@@ -3,7 +3,7 @@ export default function Footer() {
   return (
     <footer
       className="py-8 px-6 text-center"
-      style={{ borderTop: "1px solid rgba(196, 154, 60, 0.3)", background: "#FBF7EE" }}
+      style={{ borderTop: "1px solid rgba(196, 154, 60, 0.3)", background: "#F2EBD9" }}
     >
       <p
         className="font-mono"
