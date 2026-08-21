@@ -11,7 +11,7 @@ export const CHAPTERS = [
     accent: "#c49a3cff",
     title: "Growing Up Curious",
     paragraphs: [
-      "I grew up in a pretty suburb of Detroit, Michigan, in a family of doctors. Seeing that my parents saved lives… I wanted to have a meaningful impact too.",
+      "I grew up in a charming suburb of Detroit, Michigan, in a family of doctors. Seeing that my parents saved lives… I wanted to have a meaningful impact too.",
       "I've always been drawn to the foundational, human-level things like health, energy, financial wellbeing, and fun, but I couldn't choose just one, because they all mattered and I didn't want to ignore any.",
       "Then I discovered what business was. Not just money and suits, but the way people and resources organize around a vision to make it real, driving change across all these areas and around the world.",
     ],

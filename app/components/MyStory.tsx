@@ -18,7 +18,7 @@ function FlipImageCard({ src, label, caption, accent, objectPosition = "center" 
   }, [flipped]);
 
   return (
-    <div className="flex flex-col gap-2" style={{ flex: "1 1 130px", minWidth: "110px", maxWidth: "190px" }}>
+    <div className="flex flex-col gap-2 grow-0 md:grow shrink basis-[130px] min-w-[110px] max-w-[190px]">
       {/* Card — fixed 4:3 aspect ratio for all side notes */}
       <div
         onClick={() => setFlipped((v) => !v)}
@@ -599,7 +599,7 @@ export default function MyStory() {
             className="font-mono"
             style={{ fontSize: "14px", color: "#1C1A14", opacity: 0.55, marginTop: "4px" }}
           >
-            I wanted to make a real impact but couldn&apos;t pick just one thing. Here&apos;s where that led.
+            How being curious about everything led to a career helping businesses grow.
           </p>
         </div>
         <MobileChapterRail />
