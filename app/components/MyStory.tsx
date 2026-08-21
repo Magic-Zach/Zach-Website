@@ -18,7 +18,7 @@ function FlipImageCard({ src, label, caption, accent, objectPosition = "center" 
   }, [flipped]);
 
   return (
-    <div className="flex flex-col gap-2 grow-0 md:grow shrink basis-[130px] min-w-[110px] max-w-[190px]">
+    <div className="flex flex-col gap-2 md:grow md:shrink md:basis-[130px] md:min-w-[110px] md:max-w-[190px]">
       {/* Card — fixed 4:3 aspect ratio for all side notes */}
       <div
         onClick={() => setFlipped((v) => !v)}
@@ -66,7 +66,7 @@ function FlipImageCard({ src, label, caption, accent, objectPosition = "center" 
             >
               <p
                 style={{
-                  fontSize: "clamp(11px, 1vw, 13px)",
+                  fontSize: "clamp(12px, 1vw, 14px)",
                   lineHeight: 1.5,
                   color: "#F2EBD9",
                   textAlign: "center",
@@ -644,7 +644,7 @@ export default function MyStory() {
                 </span>
                 <div style={{ height: "1px", flex: 1, background: "rgba(196,154,60,0.2)" }} />
               </div>
-              <div className="flex gap-4 flex-wrap">
+              <div className="grid grid-cols-2 gap-4 md:flex md:flex-wrap">
                 {chapter.notes.map((note, i) => (
                   <NoteCard key={i} note={note} accent={chapter.accent} />
                 ))}
